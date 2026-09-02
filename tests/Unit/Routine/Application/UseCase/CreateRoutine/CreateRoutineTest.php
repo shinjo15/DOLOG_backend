@@ -92,6 +92,7 @@ final class CreateRoutineTest extends TestCase
                 );
             }
         };
+        $creationOrder = new \ArrayObject;
 
         $useCase = new CreateRoutine(
             uuidService: new class implements UuidServiceInterface
@@ -108,8 +109,12 @@ final class CreateRoutineTest extends TestCase
                     return array_shift($this->values);
                 }
             },
-            routineFactory: new class implements RoutineFactoryInterface
+            routineFactory: new class($creationOrder) implements RoutineFactoryInterface
             {
+                public function __construct(
+                    private \ArrayObject $creationOrder,
+                ) {}
+
                 public function create(
                     RoutineIdentifier $routineIdentifier,
                     RoutineName $routineName,
@@ -119,6 +124,8 @@ final class CreateRoutineTest extends TestCase
                     ?RoutineExecutionMinutes $routineExecutionMinutes,
                     ?RoutineTagIdentifiers $routineTagIdentifiers,
                 ): Routine {
+                    $this->creationOrder[] = 'routine';
+
                     return Routine::create(
                         $routineIdentifier,
                         $routineName,
@@ -130,8 +137,12 @@ final class CreateRoutineTest extends TestCase
                     );
                 }
             },
-            routineActionFactory: new class implements RoutineActionFactoryInterface
+            routineActionFactory: new class($creationOrder) implements RoutineActionFactoryInterface
             {
+                public function __construct(
+                    private \ArrayObject $creationOrder,
+                ) {}
+
                 public function create(
                     RoutineActionIdentifier $routineActionIdentifier,
                     ?RoutineActionIdentifier $parentRoutineActionIdentifier,
@@ -140,6 +151,8 @@ final class CreateRoutineTest extends TestCase
                     ?RoutineActionMemo $routineActionMemo,
                     ?RoutineActionMinutes $routineActionMinutes,
                 ): RoutineAction {
+                    $this->creationOrder[] = 'action';
+
                     return RoutineAction::create(
                         $routineActionIdentifier,
                         $parentRoutineActionIdentifier,
@@ -182,6 +195,7 @@ final class CreateRoutineTest extends TestCase
         ));
 
         $this->assertSame(1, $transactionManager->transactionCount);
+        $this->assertSame(['action', 'action', 'routine'], $creationOrder->getArrayCopy());
         $this->assertSame('34b8d590-07cb-49ca-bfd9-cb9f40e26bd3', $routineRepository->savedRoutine?->routineIdentifier()->value());
         $this->assertSame(['b0caa7f4-e1da-4f48-a8db-12fcf9bf47d5'], array_map(
             static fn (TagIdentifier $identifier): string => $identifier->value(),

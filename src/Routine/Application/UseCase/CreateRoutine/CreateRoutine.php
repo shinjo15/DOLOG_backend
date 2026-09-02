@@ -33,17 +33,19 @@ final readonly class CreateRoutine implements CreateRoutineInterface
     public function execute(CreateRoutineInputPort $input): void
     {
         $routineIdentifier = new RoutineIdentifier($this->uuidService->generate());
-        $routineActionIdentifiers = $this->createRoutineActionIdentifiers($input);
+        $routineActions = $this->createRoutineActions($input, $routineIdentifier);
         $routine = $this->routineFactory->create(
             $routineIdentifier,
             $input->routineName(),
-            new RoutineActionIdentifiers($routineActionIdentifiers),
+            new RoutineActionIdentifiers(array_map(
+                static fn (RoutineAction $routineAction): RoutineActionIdentifier => $routineAction->routineActionIdentifier(),
+                $routineActions,
+            )),
             $input->routineMemo(),
             $input->accountIdentifier(),
             $input->routineExecutionMinutes(),
             $input->routineTagIdentifiers(),
         );
-        $routineActions = $this->createRoutineActions($input, $routineIdentifier, $routineActionIdentifiers);
         $post = $this->postFactory->createRoutinePost($routineIdentifier);
 
         $this->transactionManager->transaction(function () use ($routine, $routineActions, $post): void {
@@ -57,28 +59,10 @@ final readonly class CreateRoutine implements CreateRoutineInterface
         });
     }
 
-    /**
-     * @return list<RoutineActionIdentifier>
-     */
-    private function createRoutineActionIdentifiers(CreateRoutineInputPort $input): array
-    {
-        $routineActionIdentifiers = [];
-
-        foreach ($input->routineActions() as $_) {
-            $routineActionIdentifiers[] = new RoutineActionIdentifier($this->uuidService->generate());
-        }
-
-        return $routineActionIdentifiers;
-    }
-
-    /**
-     * @param  list<RoutineActionIdentifier>  $routineActionIdentifiers
-     * @return list<RoutineAction>
-     */
+    /** @return list<RoutineAction> */
     private function createRoutineActions(
         CreateRoutineInputPort $input,
         RoutineIdentifier $routineIdentifier,
-        array $routineActionIdentifiers,
     ): array {
         $routineActions = [];
 
@@ -86,10 +70,10 @@ final readonly class CreateRoutine implements CreateRoutineInterface
             $parentRoutineActionIdentifier = $this->parentRoutineActionIdentifier(
                 $routineActionInput->parentRoutineActionIndex(),
                 $index,
-                $routineActionIdentifiers,
+                $routineActions,
             );
             $routineActions[] = $this->routineActionFactory->create(
-                $routineActionIdentifiers[$index],
+                new RoutineActionIdentifier($this->uuidService->generate()),
                 $parentRoutineActionIdentifier,
                 $routineIdentifier,
                 $routineActionInput->routineActionName(),
@@ -101,13 +85,11 @@ final readonly class CreateRoutine implements CreateRoutineInterface
         return $routineActions;
     }
 
-    /**
-     * @param  list<RoutineActionIdentifier>  $routineActionIdentifiers
-     */
+    /** @param list<RoutineAction> $routineActions */
     private function parentRoutineActionIdentifier(
         ?int $parentRoutineActionIndex,
         int $routineActionIndex,
-        array $routineActionIdentifiers,
+        array $routineActions,
     ): ?RoutineActionIdentifier {
         if ($parentRoutineActionIndex === null) {
             return null;
@@ -117,8 +99,7 @@ final readonly class CreateRoutine implements CreateRoutineInterface
             throw new \InvalidArgumentException('親行動は先に定義された行動を指定する必要があります。');
         }
 
-        return $routineActionIdentifiers[$parentRoutineActionIndex] ?? throw new \InvalidArgumentException(
-            '親行動のインデックスが行動一覧に存在しません。',
-        );
+        return $routineActions[$parentRoutineActionIndex]?->routineActionIdentifier()
+            ?? throw new \InvalidArgumentException('親行動のインデックスが行動一覧に存在しません。');
     }
 }

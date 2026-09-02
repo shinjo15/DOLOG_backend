@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Src\Routine\Application\UseCase\CreateRoutine;
 
-use Src\RoutineAction\Domain\ValueObject\RoutineActionMemo;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionMinutes;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionName;
+use Src\Routine\Domain\ValueObject\RoutineActionMemo;
+use Src\Routine\Domain\ValueObject\RoutineActionMinutes;
+use Src\Routine\Domain\ValueObject\RoutineActionName;
 
 final readonly class CreateRoutineActionInput
 {

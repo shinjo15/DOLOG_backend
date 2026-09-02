@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\RoutineAction\Domain\ValueObject;
+namespace Tests\Unit\Routine\Domain\ValueObject;
 
 use PHPUnit\Framework\TestCase;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionMemo;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionMinutes;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionName;
+use Src\Routine\Domain\ValueObject\RoutineActionMemo;
+use Src\Routine\Domain\ValueObject\RoutineActionMinutes;
+use Src\Routine\Domain\ValueObject\RoutineActionName;
 
 final class RoutineActionValueObjectsTest extends TestCase
 {

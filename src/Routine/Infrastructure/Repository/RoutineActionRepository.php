@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Src\RoutineAction\Infrastructure\Repository;
+namespace Src\Routine\Infrastructure\Repository;
 
 use App\Models\RoutineActionModel;
-use Src\RoutineAction\Domain\Entity\RoutineAction;
-use Src\RoutineAction\Domain\Repository\RoutineActionRepositoryInterface;
+use Src\Routine\Domain\Entity\RoutineAction;
+use Src\Routine\Domain\Repository\RoutineActionRepositoryInterface;
 
 final class RoutineActionRepository implements RoutineActionRepositoryInterface
 {

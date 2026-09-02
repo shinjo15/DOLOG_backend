@@ -63,6 +63,11 @@ final class CreateRoutineTest extends TestCase
         {
             public ?Post $savedPost = null;
 
+            public function find(PostIdentifier $postIdentifier): ?Post
+            {
+                return null;
+            }
+
             public function save(Post $post): void
             {
                 $this->savedPost = $post;

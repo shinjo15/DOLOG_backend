@@ -18,8 +18,10 @@ use Src\RoutineAction\Domain\Factory\RoutineActionFactoryInterface;
 use Src\RoutineAction\Domain\Repository\RoutineActionRepositoryInterface;
 use Src\RoutineAction\Infrastructure\Factory\RoutineActionFactory;
 use Src\RoutineAction\Infrastructure\Repository\RoutineActionRepository;
+use Src\Shared\Application\Service\AuthServiceInterface;
 use Src\Shared\Application\Service\UuidServiceInterface;
 use Src\Shared\Application\Transaction\TransactionManagerInterface;
+use Src\Shared\Infrastructure\Service\LaravelAuthService;
 use Src\Shared\Infrastructure\Transaction\LaravelTransactionManager;
 use Src\Tag\Application\UseCase\CreateTag\CreateTag;
 use Src\Tag\Application\UseCase\CreateTag\CreateTagInterface;
@@ -35,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(AuthServiceInterface::class, LaravelAuthService::class);
         $this->app->bind(UuidServiceInterface::class, LaravelUuidServices::class);
         $this->app->bind(TagFactoryInterface::class, TagFactory::class);
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);

@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit\RoutineAction\Infrastructure\Factory;
+
+use PHPUnit\Framework\TestCase;
+use Src\RoutineAction\Domain\ValueObject\RoutineActionName;
+use Src\RoutineAction\Infrastructure\Factory\RoutineActionFactory;
+use Src\Shared\Domain\ValueObject\Identifier\RoutineActionIdentifier;
+use Src\Shared\Domain\ValueObject\Identifier\RoutineIdentifier;
+
+final class RoutineActionFactoryTest extends TestCase
+{
+    public function test_creates_an_action_with_its_parent_action_identifier(): void
+    {
+        $routineAction = (new RoutineActionFactory)->create(
+            new RoutineActionIdentifier('75017745-e475-4337-b0f3-3fc3d670e5c7'),
+            new RoutineActionIdentifier('f6ca9f4c-169b-4b2d-a717-4a4f40d1490f'),
+            new RoutineIdentifier('34b8d590-07cb-49ca-bfd9-cb9f40e26bd3'),
+            new RoutineActionName('ストレッチ'),
+            null,
+            null,
+        );
+
+        $this->assertSame('75017745-e475-4337-b0f3-3fc3d670e5c7', $routineAction->routineActionIdentifier()->value());
+        $this->assertSame('f6ca9f4c-169b-4b2d-a717-4a4f40d1490f', $routineAction->parentRoutineActionIdentifier()?->value());
+    }
+}

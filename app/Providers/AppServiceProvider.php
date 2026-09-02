@@ -4,7 +4,25 @@ namespace App\Providers;
 
 use App\Support\LaravelUuidServices;
 use Illuminate\Support\ServiceProvider;
+use Src\Post\Domain\Factory\PostFactoryInterface;
+use Src\Post\Domain\Repository\PostRepositoryInterface;
+use Src\Post\Infrastructure\Factory\PostFactory;
+use Src\Post\Infrastructure\Repository\PostRepository;
+use Src\Routine\Application\UseCase\CreateRoutine\CreateRoutine;
+use Src\Routine\Application\UseCase\CreateRoutine\CreateRoutineInterface;
+use Src\Routine\Domain\Factory\RoutineFactoryInterface;
+use Src\Routine\Domain\Repository\RoutineRepositoryInterface;
+use Src\Routine\Infrastructure\Factory\RoutineFactory;
+use Src\Routine\Infrastructure\Repository\RoutineRepository;
+use Src\RoutineAction\Domain\Factory\RoutineActionFactoryInterface;
+use Src\RoutineAction\Domain\Repository\RoutineActionRepositoryInterface;
+use Src\RoutineAction\Infrastructure\Factory\RoutineActionFactory;
+use Src\RoutineAction\Infrastructure\Repository\RoutineActionRepository;
+use Src\Shared\Application\Service\AuthServiceInterface;
 use Src\Shared\Application\Service\UuidServiceInterface;
+use Src\Shared\Application\Transaction\TransactionManagerInterface;
+use Src\Shared\Infrastructure\Service\LaravelAuthService;
+use Src\Shared\Infrastructure\Transaction\LaravelTransactionManager;
 use Src\Tag\Application\UseCase\CreateTag\CreateTag;
 use Src\Tag\Application\UseCase\CreateTag\CreateTagInterface;
 use Src\Tag\Domain\Factory\TagFactoryInterface;
@@ -19,10 +37,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(AuthServiceInterface::class, LaravelAuthService::class);
         $this->app->bind(UuidServiceInterface::class, LaravelUuidServices::class);
         $this->app->bind(TagFactoryInterface::class, TagFactory::class);
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
         $this->app->bind(CreateTagInterface::class, CreateTag::class);
+        $this->app->bind(TransactionManagerInterface::class, LaravelTransactionManager::class);
+        $this->app->bind(RoutineFactoryInterface::class, RoutineFactory::class);
+        $this->app->bind(RoutineRepositoryInterface::class, RoutineRepository::class);
+        $this->app->bind(RoutineActionFactoryInterface::class, RoutineActionFactory::class);
+        $this->app->bind(RoutineActionRepositoryInterface::class, RoutineActionRepository::class);
+        $this->app->bind(PostFactoryInterface::class, PostFactory::class);
+        $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
+        $this->app->bind(CreateRoutineInterface::class, CreateRoutine::class);
     }
 
     /**

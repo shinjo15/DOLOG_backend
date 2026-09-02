@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Src\Shared\Infrastructure\Service;
+
+use Illuminate\Http\Request;
+use RuntimeException;
+use Src\Shared\Application\Service\AuthServiceInterface;
+
+final readonly class LaravelAuthService implements AuthServiceInterface
+{
+    public const SESSION_KEY = 'account_identifier';
+
+    public function __construct(
+        private Request $request,
+    ) {}
+
+    public function accountIdentifier(): string
+    {
+        $accountIdentifier = $this->request->session()->get(self::SESSION_KEY);
+
+        if (! is_string($accountIdentifier) || $accountIdentifier === '') {
+            throw new RuntimeException('セッションに認証済みアカウント識別子がありません。');
+        }
+
+        return $accountIdentifier;
+    }
+}

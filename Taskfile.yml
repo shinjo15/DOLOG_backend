@@ -16,6 +16,11 @@ tasks:
     cmds:
       - docker compose exec --no-TTY app php artisan test --compact {{.CLI_ARGS}}
 
+  coverage:
+    desc: "PCOVでsrcとappのテストカバレッジをDockerコンテナ内で計測する"
+    cmds:
+      - docker compose exec --no-TTY app php -d pcov.enabled=1 artisan test --coverage --no-ansi {{.CLI_ARGS}}
+
   pint:
     desc: Laravel Pintで変更ファイルをフォーマットする
     cmds:

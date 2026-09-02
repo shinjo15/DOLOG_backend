@@ -1,0 +1,43 @@
+version: '3'
+
+tasks:
+  up:
+    desc: Laravelアプリケーションを起動する
+    cmds:
+      - docker compose up --build --detach
+
+  down:
+    desc: Laravelアプリケーションを停止する
+    cmds:
+      - docker compose down
+
+  test:
+    desc: "PHPUnitテストをDockerコンテナ内で実行する。例: task test -- tests/Unit/Routine/Domain/Entity/RoutineTest.php"
+    cmds:
+      - docker compose exec --no-TTY app php artisan test --compact {{.CLI_ARGS}}
+
+  pint:
+    desc: Laravel Pintで変更ファイルをフォーマットする
+    cmds:
+      - docker compose exec --no-TTY app vendor/bin/pint --dirty --format agent
+
+  check:
+    desc: コードフォーマットと全テストを実行する
+    cmds:
+      - task: pint
+      - task: test
+
+  migrate:
+    desc: マイグレーションを実行する
+    cmds:
+      - docker compose exec --no-TTY app php artisan migrate --force
+
+  migrate-fresh:
+    desc: DBを初期化してマイグレーションを実行する
+    cmds:
+      - docker compose exec --no-TTY app php artisan migrate:fresh --force
+
+  shell:
+    desc: appコンテナのシェルを開く
+    cmds:
+      - docker compose exec app bash

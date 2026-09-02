@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Src\Routine\Domain\ValueObject;
 
-use Src\Shared\Domain\ValueObject\Identifier\ActionIdentifier;
+use Src\Shared\Domain\ValueObject\Identifier\RoutineActionIdentifier;
 
 final readonly class RoutineActionIdentifiers
 {
     /**
-     * @param  list<ActionIdentifier>  $values
+     * @param  list<RoutineActionIdentifier>  $values
      */
     public function __construct(
         private array $values,
@@ -20,7 +20,7 @@ final readonly class RoutineActionIdentifiers
     }
 
     /**
-     * @return list<ActionIdentifier>
+     * @return list<RoutineActionIdentifier>
      */
     public function values(): array
     {

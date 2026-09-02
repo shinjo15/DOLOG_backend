@@ -6,4 +6,6 @@ namespace Src\Shared\Domain\ValueObject\Identifier;
 
 use Src\Shared\Domain\ValueObject\Base\UuidValueObject;
 
-final readonly class ActionIdentifier extends UuidValueObject {}
+final readonly class RoutineActionIdentifier extends UuidValueObject
+{
+}

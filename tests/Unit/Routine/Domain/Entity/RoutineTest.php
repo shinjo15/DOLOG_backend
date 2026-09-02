@@ -14,7 +14,7 @@ use Src\Routine\Domain\ValueObject\RoutineTagIdentifiers;
 use Src\Shared\Domain\ValueObject\Base\IntegerValueObject;
 use Src\Shared\Domain\ValueObject\Base\StringValueObject;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
-use Src\Shared\Domain\ValueObject\Identifier\ActionIdentifier;
+use Src\Shared\Domain\ValueObject\Identifier\RoutineActionIdentifier;
 use Src\Shared\Domain\ValueObject\Identifier\RoutineIdentifier;
 use Src\Shared\Domain\ValueObject\Identifier\TagIdentifier;
 
@@ -25,8 +25,8 @@ final class RoutineTest extends TestCase
         $routineIdentifier = new RoutineIdentifier('34b8d590-07cb-49ca-bfd9-cb9f40e26bd3');
         $routineName = new RoutineName('朝の集中ルーティン');
         $actionIdentifiers = new RoutineActionIdentifiers([
-            new ActionIdentifier('f6ca9f4c-169b-4b2d-a717-4a4f40d1490f'),
-            new ActionIdentifier('75017745-e475-4337-b0f3-3fc3d670e5c7'),
+            new RoutineActionIdentifier('f6ca9f4c-169b-4b2d-a717-4a4f40d1490f'),
+            new RoutineActionIdentifier('75017745-e475-4337-b0f3-3fc3d670e5c7'),
         ]);
         $routineMemo = new RoutineMemo('仕事前に集中力を高める');
         $accountIdentifier = new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87');
@@ -108,7 +108,7 @@ final class RoutineTest extends TestCase
             routineIdentifier: new RoutineIdentifier('34b8d590-07cb-49ca-bfd9-cb9f40e26bd3'),
             routineName: new RoutineName('朝の集中ルーティン'),
             routineActionIdentifiers: new RoutineActionIdentifiers([
-                new ActionIdentifier('f6ca9f4c-169b-4b2d-a717-4a4f40d1490f'),
+                new RoutineActionIdentifier('f6ca9f4c-169b-4b2d-a717-4a4f40d1490f'),
             ]),
             routineMemo: null,
             accountIdentifier: new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'),

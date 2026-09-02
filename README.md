@@ -15,7 +15,7 @@ PHP と Composer をホストへインストールする必要はありません
 docker compose up --build --detach
 ```
 
-アプリケーションは http://localhost:8080 で確認できます。
+アプリケーションは http://localhost:8001 で確認できます。
 
 停止する場合:
 

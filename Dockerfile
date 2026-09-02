@@ -1,7 +1,7 @@
 FROM php:8.4-cli
 
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends libonig-dev libsqlite3-dev libzip-dev unzip \
+    && apt-get install --yes --no-install-recommends git libonig-dev libsqlite3-dev libzip-dev unzip \
     && docker-php-ext-install mbstring pdo_sqlite zip \
     && rm -rf /var/lib/apt/lists/*
 

@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  backend-checks:
+    name: Backend checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Task
+        uses: go-task/setup-task@v1
+        with:
+          version: '3.x'
+
+      - name: Install Composer dependencies
+        run: |
+          export DOCKER_UID="$(id -u)"
+          export DOCKER_GID="$(id -g)"
+          docker compose run --rm --no-deps -e COMPOSER_CACHE_DIR=/tmp/composer-cache app composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare Laravel environment
+        run: |
+          export DOCKER_UID="$(id -u)"
+          export DOCKER_GID="$(id -g)"
+          docker compose run --rm --no-deps app sh -c 'cp .env.example .env && php artisan key:generate --force'
+
+      - name: Run backend checks
+        run: |
+          export DOCKER_UID="$(id -u)"
+          export DOCKER_GID="$(id -g)"
+          docker compose up --build --detach
+          task check
+
+      - name: Stop Docker Compose services
+        if: always()
+        run: |
+          export DOCKER_UID="$(id -u)"
+          export DOCKER_GID="$(id -g)"
+          docker compose down --volumes --remove-orphans

@@ -25,6 +25,12 @@ jobs:
         with:
           version: '3.x'
 
+      - name: Install Composer dependencies
+        run: |
+          export DOCKER_UID="$(id -u)"
+          export DOCKER_GID="$(id -g)"
+          docker compose run --rm --no-deps -e COMPOSER_CACHE_DIR=/tmp/composer-cache app composer install --no-interaction --prefer-dist --no-progress
+
       - name: Run backend checks
         run: |
           export DOCKER_UID="$(id -u)"

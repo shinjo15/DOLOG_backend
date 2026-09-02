@@ -44,8 +44,14 @@ return new class extends Migration
 
         Schema::create('tags', function (Blueprint $table): void {
             $table->uuid('tag_identifier')->primary();
-            $table->uuid('routine_identifier')->index();
             $table->string('tag_name', 50);
+            $table->boolean('available')->default(true);
+            $table->timestamps();
+        });
+
+        Schema::create('routine_tags', function (Blueprint $table): void {
+            $table->uuid('routine_identifier');
+            $table->uuid('tag_identifier');
             $table->boolean('available')->default(true);
             $table->timestamps();
 
@@ -54,11 +60,18 @@ return new class extends Migration
                 ->references('routine_identifier')
                 ->on('routines')
                 ->cascadeOnDelete();
+            $table
+                ->foreign('tag_identifier')
+                ->references('tag_identifier')
+                ->on('tags')
+                ->cascadeOnDelete();
+            $table->primary(['routine_identifier', 'tag_identifier']);
         });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('routine_tags');
         Schema::dropIfExists('tags');
         Schema::dropIfExists('routine_actions');
         Schema::dropIfExists('routines');

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Src\RoutineAction\Domain\Entity;
+namespace Src\Routine\Domain\Entity;
 
-use Src\RoutineAction\Domain\ValueObject\RoutineActionMemo;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionMinutes;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionName;
+use Src\Routine\Domain\ValueObject\RoutineActionMemo;
+use Src\Routine\Domain\ValueObject\RoutineActionMinutes;
+use Src\Routine\Domain\ValueObject\RoutineActionName;
 use Src\Shared\Domain\ValueObject\Identifier\RoutineActionIdentifier;
 use Src\Shared\Domain\ValueObject\Identifier\RoutineIdentifier;
 

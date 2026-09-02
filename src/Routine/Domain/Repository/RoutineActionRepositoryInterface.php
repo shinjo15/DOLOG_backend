@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Src\RoutineAction\Domain\Repository;
+namespace Src\Routine\Domain\Repository;
 
-use Src\RoutineAction\Domain\Entity\RoutineAction;
+use Src\Routine\Domain\Entity\RoutineAction;
 
 interface RoutineActionRepositoryInterface
 {

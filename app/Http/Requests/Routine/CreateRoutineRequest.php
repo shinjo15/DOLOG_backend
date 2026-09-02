@@ -7,13 +7,13 @@ namespace App\Http\Requests\Routine;
 use Illuminate\Foundation\Http\FormRequest;
 use Src\Routine\Application\UseCase\CreateRoutine\CreateRoutineActionInput;
 use Src\Routine\Application\UseCase\CreateRoutine\CreateRoutineInput;
+use Src\Routine\Domain\ValueObject\RoutineActionMemo;
+use Src\Routine\Domain\ValueObject\RoutineActionMinutes;
+use Src\Routine\Domain\ValueObject\RoutineActionName;
 use Src\Routine\Domain\ValueObject\RoutineExecutionMinutes;
 use Src\Routine\Domain\ValueObject\RoutineMemo;
 use Src\Routine\Domain\ValueObject\RoutineName;
 use Src\Routine\Domain\ValueObject\RoutineTagIdentifiers;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionMemo;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionMinutes;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionName;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 use Src\Shared\Domain\ValueObject\Identifier\TagIdentifier;
 

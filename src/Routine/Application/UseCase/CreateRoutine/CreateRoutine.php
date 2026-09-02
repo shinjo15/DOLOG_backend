@@ -6,12 +6,12 @@ namespace Src\Routine\Application\UseCase\CreateRoutine;
 
 use Src\Post\Domain\Factory\PostFactoryInterface;
 use Src\Post\Domain\Repository\PostRepositoryInterface;
+use Src\Routine\Domain\Entity\RoutineAction;
+use Src\Routine\Domain\Factory\RoutineActionFactoryInterface;
 use Src\Routine\Domain\Factory\RoutineFactoryInterface;
+use Src\Routine\Domain\Repository\RoutineActionRepositoryInterface;
 use Src\Routine\Domain\Repository\RoutineRepositoryInterface;
 use Src\Routine\Domain\ValueObject\RoutineActionIdentifiers;
-use Src\RoutineAction\Domain\Entity\RoutineAction;
-use Src\RoutineAction\Domain\Factory\RoutineActionFactoryInterface;
-use Src\RoutineAction\Domain\Repository\RoutineActionRepositoryInterface;
 use Src\Shared\Application\Service\UuidServiceInterface;
 use Src\Shared\Application\Transaction\TransactionManagerInterface;
 use Src\Shared\Domain\ValueObject\Identifier\RoutineActionIdentifier;

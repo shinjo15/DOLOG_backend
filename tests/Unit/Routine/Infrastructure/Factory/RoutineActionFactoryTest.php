@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\RoutineAction\Infrastructure\Factory;
+namespace Tests\Unit\Routine\Infrastructure\Factory;
 
 use PHPUnit\Framework\TestCase;
-use Src\RoutineAction\Domain\ValueObject\RoutineActionName;
-use Src\RoutineAction\Infrastructure\Factory\RoutineActionFactory;
+use Src\Routine\Domain\ValueObject\RoutineActionName;
+use Src\Routine\Infrastructure\Factory\RoutineActionFactory;
 use Src\Shared\Domain\ValueObject\Identifier\RoutineActionIdentifier;
 use Src\Shared\Domain\ValueObject\Identifier\RoutineIdentifier;
 

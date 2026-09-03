@@ -15,9 +15,17 @@ return new class extends Migration
             $table->string('account_name', 50);
             $table->string('account_bio', 300)->nullable();
             $table->string('email_address')->unique();
-            $table->json('favorite_tag_identifiers');
             $table->boolean('available')->default(true);
             $table->timestamps();
+        });
+
+        Schema::create('favorite_tags', function (Blueprint $table): void {
+            $table->uuid('account_identifier');
+            $table->uuid('tag_identifier');
+            $table->timestamps();
+            $table->foreign('account_identifier')->references('account_identifier')->on('accounts')->cascadeOnDelete();
+            $table->foreign('tag_identifier')->references('tag_identifier')->on('tags')->cascadeOnDelete();
+            $table->unique(['account_identifier', 'tag_identifier']);
         });
 
         Schema::create('account_social_links', function (Blueprint $table): void {
@@ -42,6 +50,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('account_credentials');
         Schema::dropIfExists('account_social_links');
+        Schema::dropIfExists('favorite_tags');
         Schema::dropIfExists('accounts');
     }
 };

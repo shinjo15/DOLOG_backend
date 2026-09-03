@@ -17,15 +17,20 @@ final class AccountModel extends Model
 
     protected $keyType = 'string';
 
-    protected $fillable = ['account_identifier', 'account_name', 'account_bio', 'email_address', 'favorite_tag_identifiers', 'available'];
+    protected $fillable = ['account_identifier', 'account_name', 'account_bio', 'email_address', 'available'];
 
     protected function casts(): array
     {
-        return ['favorite_tag_identifiers' => 'array', 'available' => 'boolean'];
+        return ['available' => 'boolean'];
     }
 
     public function socialLinks(): HasMany
     {
         return $this->hasMany(AccountSocialLinkModel::class, 'account_identifier', 'account_identifier')->orderBy('position');
+    }
+
+    public function favoriteTags(): HasMany
+    {
+        return $this->hasMany(FavoriteTagModel::class, 'account_identifier', 'account_identifier');
     }
 }

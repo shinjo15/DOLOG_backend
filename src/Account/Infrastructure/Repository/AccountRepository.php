@@ -6,6 +6,7 @@ namespace Src\Account\Infrastructure\Repository;
 
 use App\Models\AccountModel;
 use App\Models\AccountSocialLinkModel;
+use App\Models\FavoriteTagModel;
 use Illuminate\Support\Facades\DB;
 use Src\Account\Domain\Entity\Account;
 use Src\Account\Domain\Repository\AccountRepositoryInterface;
@@ -23,13 +24,13 @@ final class AccountRepository implements AccountRepositoryInterface
 {
     public function findByEmailAddress(EmailAddress $emailAddress): ?Account
     {
-        $model = AccountModel::query()->with('socialLinks')->where('email_address', $emailAddress->value())->first();
+        $model = AccountModel::query()->with(['socialLinks', 'favoriteTags'])->where('email_address', $emailAddress->value())->first();
 
         return $model === null ? null : Account::create(
             new AccountIdentifier($model->account_identifier), new AccountName($model->account_name),
             $model->account_bio === null ? null : new AccountBio($model->account_bio), new EmailAddress($model->email_address),
             $model->socialLinks->map(static fn (AccountSocialLinkModel $socialLink): SocialLink => new SocialLink(SocialType::from($socialLink->type), new SocialUrl($socialLink->url)))->all(),
-            new FavoriteTagIdentifiers(array_map(static fn (string $tagIdentifier): TagIdentifier => new TagIdentifier($tagIdentifier), $model->favorite_tag_identifiers)),
+            new FavoriteTagIdentifiers($model->favoriteTags->map(static fn (FavoriteTagModel $favoriteTag): TagIdentifier => new TagIdentifier($favoriteTag->tag_identifier))->all()),
         );
     }
 
@@ -38,8 +39,7 @@ final class AccountRepository implements AccountRepositoryInterface
         DB::transaction(function () use ($account): void {
             $model = AccountModel::query()->create([
                 'account_identifier' => $account->accountIdentifier()->value(), 'account_name' => $account->accountName()->value(),
-                'account_bio' => $account->accountBio()?->value(), 'email_address' => $account->emailAddress()->value(),
-                'favorite_tag_identifiers' => array_map(static fn (TagIdentifier $identifier): string => $identifier->value(), $account->favoriteTagIdentifiers()->values()), 'available' => true,
+                'account_bio' => $account->accountBio()?->value(), 'email_address' => $account->emailAddress()->value(), 'available' => true,
             ]);
 
             $model->socialLinks()->createMany(array_map(
@@ -50,6 +50,10 @@ final class AccountRepository implements AccountRepositoryInterface
                 ],
                 $account->socialLinks(),
                 array_keys($account->socialLinks()),
+            ));
+            $model->favoriteTags()->createMany(array_map(
+                static fn (TagIdentifier $identifier): array => ['tag_identifier' => $identifier->value()],
+                $account->favoriteTagIdentifiers()->values(),
             ));
         });
     }

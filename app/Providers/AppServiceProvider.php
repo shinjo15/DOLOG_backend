@@ -4,6 +4,12 @@ namespace App\Providers;
 
 use App\Support\LaravelUuidServices;
 use Illuminate\Support\ServiceProvider;
+use Src\Like\Application\UseCase\CreateLike\CreateLike;
+use Src\Like\Application\UseCase\CreateLike\CreateLikeInterface;
+use Src\Like\Domain\Factory\LikeFactoryInterface;
+use Src\Like\Domain\Repository\LikeRepositoryInterface;
+use Src\Like\Infrastructure\Factory\LikeFactory;
+use Src\Like\Infrastructure\Repository\LikeRepository;
 use Src\Post\Domain\Factory\PostFactoryInterface;
 use Src\Post\Domain\Repository\PostRepositoryInterface;
 use Src\Post\Infrastructure\Factory\PostFactory;
@@ -49,6 +55,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
         $this->app->bind(CreateTagInterface::class, CreateTag::class);
         $this->app->bind(TransactionManagerInterface::class, LaravelTransactionManager::class);
+        $this->app->bind(LikeFactoryInterface::class, LikeFactory::class);
+        $this->app->bind(LikeRepositoryInterface::class, LikeRepository::class);
+        $this->app->bind(CreateLikeInterface::class, CreateLike::class);
         $this->app->bind(SupportFactoryInterface::class, SupportFactory::class);
         $this->app->bind(SupportRepositoryInterface::class, SupportRepository::class);
         $this->app->bind(CreateSupportInterface::class, CreateSupport::class);

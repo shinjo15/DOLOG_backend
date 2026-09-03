@@ -79,11 +79,6 @@ final class InMemoryAccountRepository implements AccountRepositoryInterface
 
     public ?Account $savedAccount = null;
 
-    public function find(AccountIdentifier $accountIdentifier): ?Account
-    {
-        return null;
-    }
-
     public function findByEmailAddress(EmailAddress $emailAddress): ?Account
     {
         return $this->existingAccount;

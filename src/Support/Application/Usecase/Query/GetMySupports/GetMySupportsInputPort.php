@@ -10,5 +10,5 @@ interface GetMySupportsInputPort
 
     public function page(): int;
 
-    public function perPage(): int;
+    public function numberOfItemsPerPage(): int;
 }

@@ -7,7 +7,6 @@ namespace Src\Support\Infrastructure\Query\GetMySupports;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsInputPort;
-use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsItemOutput;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsOutput;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsOutputPort;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsQueryInterface;
@@ -23,7 +22,7 @@ final class GetMySupportsQuery implements GetMySupportsQueryInterface
             ->where('posts.available', true)
             ->orderByDesc('supports.created_at')
             ->orderBy('supports.post_identifier')
-            ->paginate($input->perPage(), [
+            ->paginate($input->numberOfItemsPerPage(), [
                 'posts.post_identifier',
                 'posts.routine_identifier',
                 'posts.post_category',
@@ -33,17 +32,17 @@ final class GetMySupportsQuery implements GetMySupportsQueryInterface
             ], 'page', $input->page());
 
         $items = $paginator->getCollection()
-            ->map(static fn (object $record): GetMySupportsItemOutput => new GetMySupportsItemOutput(
-                (string) $record->post_identifier,
-                (string) $record->routine_identifier,
-                (string) $record->post_category,
-                (int) $record->post_like_count,
-                (int) $record->post_support_count,
-                (new DateTimeImmutable((string) $record->supported_at))->format(DATE_ATOM),
-            ))
+            ->map(static fn (object $record): array => [
+                'postIdentifier' => (string) $record->post_identifier,
+                'routineIdentifier' => (string) $record->routine_identifier,
+                'postCategory' => (string) $record->post_category,
+                'postLikeCount' => (int) $record->post_like_count,
+                'postSupportCount' => (int) $record->post_support_count,
+                'supportedAt' => (new DateTimeImmutable((string) $record->supported_at))->format(DATE_ATOM),
+            ])
             ->values()
             ->all();
 
-        return new GetMySupportsOutput($items, $paginator->currentPage(), $paginator->lastPage(), $paginator->perPage(), $paginator->total());
+        return new GetMySupportsOutput($items, $paginator->total());
     }
 }

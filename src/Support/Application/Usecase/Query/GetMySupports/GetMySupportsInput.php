@@ -9,7 +9,7 @@ final readonly class GetMySupportsInput implements GetMySupportsInputPort
     public function __construct(
         private string $accountIdentifier,
         private int $page,
-        private int $perPage,
+        private int $numberOfItemsPerPage,
     ) {}
 
     public function accountIdentifier(): string
@@ -22,8 +22,8 @@ final readonly class GetMySupportsInput implements GetMySupportsInputPort
         return $this->page;
     }
 
-    public function perPage(): int
+    public function numberOfItemsPerPage(): int
     {
-        return $this->perPage;
+        return $this->numberOfItemsPerPage;
     }
 }

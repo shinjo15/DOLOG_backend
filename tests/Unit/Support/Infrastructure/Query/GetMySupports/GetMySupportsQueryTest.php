@@ -7,8 +7,6 @@ namespace Tests\Unit\Support\Infrastructure\Query\GetMySupports;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsInput;
-use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsItemOutputPort;
-use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsOutputPort;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsQueryInterface;
 use Src\Support\Infrastructure\Query\GetMySupports\GetMySupportsQuery;
 use Tests\TestCase;
@@ -30,12 +28,13 @@ final class GetMySupportsQueryTest extends TestCase
         $this->createSupport('33333333-3333-4333-8333-333333333333', 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', '2026-09-03 13:00:00');
         $this->createSupport('44444444-4444-4444-8444-444444444444', 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', '2026-09-03 14:00:00');
 
-        $result = (new GetMySupportsQuery)->execute(new GetMySupportsInput('33333333-3333-4333-8333-333333333333', 1, 10));
+        $input = new GetMySupportsInput('33333333-3333-4333-8333-333333333333', 1, 10);
+
+        self::assertSame(10, $input->numberOfItemsPerPage());
+
+        $result = (new GetMySupportsQuery)->execute($input);
 
         self::assertSame(2, $result->total());
-        self::assertSame(1, $result->currentPage());
-        self::assertSame(1, $result->lastPage());
-        self::assertSame(10, $result->perPage());
         self::assertSame([
             [
                 'postIdentifier' => 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
@@ -53,7 +52,7 @@ final class GetMySupportsQueryTest extends TestCase
                 'postSupportCount' => 8,
                 'supportedAt' => '2026-09-03T10:00:00+00:00',
             ],
-        ], $this->items($result));
+        ], $result->items());
     }
 
     public function test_it_paginates_my_action_supports(): void
@@ -66,33 +65,26 @@ final class GetMySupportsQueryTest extends TestCase
         $this->createSupport('33333333-3333-4333-8333-333333333333', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', '2026-09-03 11:00:00');
         $this->createSupport('33333333-3333-4333-8333-333333333333', 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', '2026-09-03 12:00:00');
 
-        $result = (new GetMySupportsQuery)->execute(new GetMySupportsInput('33333333-3333-4333-8333-333333333333', 2, 2));
+        $input = new GetMySupportsInput('33333333-3333-4333-8333-333333333333', 2, 2);
+
+        self::assertSame(2, $input->numberOfItemsPerPage());
+
+        $result = (new GetMySupportsQuery)->execute($input);
 
         self::assertSame(3, $result->total());
-        self::assertSame(2, $result->currentPage());
-        self::assertSame(2, $result->lastPage());
-        self::assertSame(2, $result->perPage());
-        self::assertSame(['aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'], array_map(static fn (GetMySupportsItemOutputPort $item): string => $item->postIdentifier(), $result->items()));
+        self::assertSame([[
+            'postIdentifier' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            'routineIdentifier' => '11111111-1111-4111-8111-111111111111',
+            'postCategory' => 'action',
+            'postLikeCount' => 0,
+            'postSupportCount' => 1,
+            'supportedAt' => '2026-09-03T10:00:00+00:00',
+        ]], $result->items());
     }
 
     public function test_query_interface_is_bound_to_infrastructure_query(): void
     {
         self::assertInstanceOf(GetMySupportsQuery::class, $this->app->make(GetMySupportsQueryInterface::class));
-    }
-
-    /**
-     * @return list<array{postIdentifier: string, routineIdentifier: string, postCategory: string, postLikeCount: int, postSupportCount: int, supportedAt: string}>
-     */
-    private function items(GetMySupportsOutputPort $result): array
-    {
-        return array_map(static fn (GetMySupportsItemOutputPort $item): array => [
-            'postIdentifier' => $item->postIdentifier(),
-            'routineIdentifier' => $item->routineIdentifier(),
-            'postCategory' => $item->postCategory(),
-            'postLikeCount' => $item->postLikeCount(),
-            'postSupportCount' => $item->postSupportCount(),
-            'supportedAt' => $item->supportedAt(),
-        ], $result->items());
     }
 
     private function createRoutine(string $routineIdentifier): void

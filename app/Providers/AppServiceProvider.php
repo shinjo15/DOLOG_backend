@@ -31,6 +31,8 @@ use Src\Shared\Infrastructure\Service\LaravelAuthService;
 use Src\Shared\Infrastructure\Transaction\LaravelTransactionManager;
 use Src\Support\Application\UseCase\CreateSupport\CreateSupport;
 use Src\Support\Application\UseCase\CreateSupport\CreateSupportInterface;
+use Src\Support\Application\UseCase\GetMySupports\GetMySupports;
+use Src\Support\Application\UseCase\GetMySupports\GetMySupportsInterface;
 use Src\Support\Domain\Factory\SupportFactoryInterface;
 use Src\Support\Domain\Repository\SupportRepositoryInterface;
 use Src\Support\Infrastructure\Factory\SupportFactory;
@@ -61,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SupportFactoryInterface::class, SupportFactory::class);
         $this->app->bind(SupportRepositoryInterface::class, SupportRepository::class);
         $this->app->bind(CreateSupportInterface::class, CreateSupport::class);
+        $this->app->bind(GetMySupportsInterface::class, GetMySupports::class);
         $this->app->bind(RoutineFactoryInterface::class, RoutineFactory::class);
         $this->app->bind(RoutineRepositoryInterface::class, RoutineRepository::class);
         $this->app->bind(RoutineActionFactoryInterface::class, RoutineActionFactory::class);

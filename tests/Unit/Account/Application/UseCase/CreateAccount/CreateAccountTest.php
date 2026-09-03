@@ -1,0 +1,146 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit\Account\Application\UseCase\CreateAccount;
+
+use PHPUnit\Framework\TestCase;
+use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
+use Src\Account\Application\Service\PasscodeHashingServiceInterface;
+use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
+use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
+use Src\Account\Application\ValueObject\Passcode;
+use Src\Account\Domain\Entity\Account;
+use Src\Account\Domain\Entity\AccountCredential;
+use Src\Account\Domain\Exception\DuplicateEmailAddressException;
+use Src\Account\Domain\Factory\AccountFactoryInterface;
+use Src\Account\Domain\Repository\AccountCredentialRepositoryInterface;
+use Src\Account\Domain\Repository\AccountRepositoryInterface;
+use Src\Account\Domain\ValueObject\AccountBio;
+use Src\Account\Domain\ValueObject\AccountName;
+use Src\Account\Domain\ValueObject\EmailAddress;
+use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
+use Src\Shared\Application\Transaction\TransactionManagerInterface;
+use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
+
+final class CreateAccountTest extends TestCase
+{
+    public function test_saves_an_account_and_its_hashed_passcode_then_sends_a_registration_email(): void
+    {
+        $account = Account::create(
+            new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'),
+            new AccountName('朝活ユーザー'),
+            new AccountBio('朝の時間を大切にしています。'),
+            new EmailAddress('user@example.com'),
+            [],
+            new FavoriteTagIdentifiers([]),
+        );
+        $accountRepository = new InMemoryAccountRepository;
+        $credentialRepository = new InMemoryAccountCredentialRepository;
+        $mailService = new FakeAccountRegistrationMailService;
+
+        (new CreateAccount(
+            accountRepository: $accountRepository,
+            accountCredentialRepository: $credentialRepository,
+            accountFactory: new FakeAccountFactory($account),
+            passcodeHashingService: new FakePasscodeHashingService,
+            accountRegistrationMailService: $mailService,
+            transactionManager: new ImmediateTransactionManager,
+        ))->execute(new CreateAccountInput(
+            accountName: new AccountName('朝活ユーザー'),
+            accountBio: new AccountBio('朝の時間を大切にしています。'),
+            emailAddress: new EmailAddress('user@example.com'),
+            socialLinks: [],
+            favoriteTagIdentifiers: new FavoriteTagIdentifiers([]),
+            passcode: new Passcode('password'),
+        ));
+
+        self::assertSame($account, $accountRepository->savedAccount);
+        self::assertSame('3b5581e9-16df-4879-b7d2-5d88dca6ab87', $credentialRepository->savedCredential?->accountIdentifier()->value());
+        self::assertSame('hashed-password', $credentialRepository->savedCredential?->passcodeHash());
+        self::assertSame(['user@example.com', '朝活ユーザー'], $mailService->sentTo);
+    }
+
+    public function test_rejects_a_duplicate_email_address_without_saving_or_sending(): void
+    {
+        $accountRepository = new InMemoryAccountRepository;
+        $accountRepository->existingAccount = Account::create(
+            new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'), new AccountName('既存ユーザー'), null,
+            new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]),
+        );
+        $credentialRepository = new InMemoryAccountCredentialRepository;
+        $mailService = new FakeAccountRegistrationMailService;
+
+        $this->expectException(DuplicateEmailAddressException::class);
+
+        (new CreateAccount(
+            accountRepository: $accountRepository,
+            accountCredentialRepository: $credentialRepository,
+            accountFactory: new FakeAccountFactory($accountRepository->existingAccount),
+            passcodeHashingService: new FakePasscodeHashingService,
+            accountRegistrationMailService: $mailService,
+            transactionManager: new ImmediateTransactionManager,
+        ))->execute(new CreateAccountInput(
+            new AccountName('朝活ユーザー'), null, new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]), new Passcode('password'),
+        ));
+    }
+}
+
+final class InMemoryAccountRepository implements AccountRepositoryInterface
+{
+    public ?Account $existingAccount = null;
+
+    public ?Account $savedAccount = null;
+
+    public function findByEmailAddress(EmailAddress $emailAddress): ?Account
+    {
+        return $this->existingAccount;
+    }
+
+    public function save(Account $account): void
+    {
+        $this->savedAccount = $account;
+    }
+}
+final class InMemoryAccountCredentialRepository implements AccountCredentialRepositoryInterface
+{
+    public ?AccountCredential $savedCredential = null;
+
+    public function save(AccountCredential $credential): void
+    {
+        $this->savedCredential = $credential;
+    }
+}
+final readonly class FakeAccountFactory implements AccountFactoryInterface
+{
+    public function __construct(private Account $account) {}
+
+    public function create(AccountName $accountName, ?AccountBio $accountBio, EmailAddress $emailAddress, array $socialLinks, FavoriteTagIdentifiers $favoriteTagIdentifiers): Account
+    {
+        return $this->account;
+    }
+}
+final class FakePasscodeHashingService implements PasscodeHashingServiceInterface
+{
+    public function hash(Passcode $passcode): string
+    {
+        return 'hashed-'.$passcode->value();
+    }
+}
+final class FakeAccountRegistrationMailService implements AccountRegistrationMailServiceInterface
+{
+    /** @var array{string, string}|null */
+    public ?array $sentTo = null;
+
+    public function send(EmailAddress $emailAddress, AccountName $accountName): void
+    {
+        $this->sentTo = [$emailAddress->value(), $accountName->value()];
+    }
+}
+final class ImmediateTransactionManager implements TransactionManagerInterface
+{
+    public function transaction(callable $callback): mixed
+    {
+        return $callback();
+    }
+}

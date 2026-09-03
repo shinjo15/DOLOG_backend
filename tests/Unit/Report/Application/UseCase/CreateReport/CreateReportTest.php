@@ -5,11 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Report\Application\UseCase\CreateReport;
 
 use PHPUnit\Framework\TestCase;
-use Src\Account\Domain\Entity\Account;
-use Src\Account\Domain\Repository\AccountRepositoryInterface;
-use Src\Account\Domain\ValueObject\AccountName;
-use Src\Account\Domain\ValueObject\EmailAddress;
-use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
 use Src\Report\Application\Query\TargetPostOwnershipQueryInterface;
 use Src\Report\Application\UseCase\CreateReport\CreateReport;
 use Src\Report\Application\UseCase\CreateReport\CreateReportInput;
@@ -19,6 +14,7 @@ use Src\Report\Domain\Exception\SelfReportException;
 use Src\Report\Domain\Exception\TargetAccountNotFoundException;
 use Src\Report\Domain\Exception\TargetPostMismatchException;
 use Src\Report\Domain\Factory\ReportFactoryInterface;
+use Src\Report\Domain\Repository\AccountRepositoryInterface;
 use Src\Report\Domain\Repository\ReportRepositoryInterface;
 use Src\Report\Domain\ValueObject\ReportCategory;
 use Src\Report\Domain\ValueObject\ReportIdentifier;
@@ -32,7 +28,7 @@ final class CreateReportTest extends TestCase
     public function test_creates_an_account_report(): void
     {
         $repository = new InMemoryReportRepository;
-        $this->useCase($this->account('f0cfa1a3-1ac7-44af-9bf4-b36c9262f028'), true, $repository)->execute($this->input());
+        $this->useCase(true, true, $repository)->execute($this->input());
 
         self::assertCount(1, $repository->saved);
         self::assertNull($repository->saved[0]->targetPostIdentifier());
@@ -41,7 +37,7 @@ final class CreateReportTest extends TestCase
     public function test_creates_a_post_report(): void
     {
         $repository = new InMemoryReportRepository;
-        $this->useCase($this->account('f0cfa1a3-1ac7-44af-9bf4-b36c9262f028'), true, $repository)->execute($this->input(new PostIdentifier('e1954b83-b532-40ae-8b9e-49d488040d0f')));
+        $this->useCase(true, true, $repository)->execute($this->input(new PostIdentifier('e1954b83-b532-40ae-8b9e-49d488040d0f')));
 
         self::assertSame('e1954b83-b532-40ae-8b9e-49d488040d0f', $repository->saved[0]->targetPostIdentifier()?->value());
     }
@@ -49,13 +45,13 @@ final class CreateReportTest extends TestCase
     public function test_rejects_a_missing_target_account(): void
     {
         $this->expectException(TargetAccountNotFoundException::class);
-        $this->useCase(null, true, new InMemoryReportRepository)->execute($this->input());
+        $this->useCase(false, true, new InMemoryReportRepository)->execute($this->input());
     }
 
     public function test_rejects_a_post_not_owned_by_the_target_account(): void
     {
         $this->expectException(TargetPostMismatchException::class);
-        $this->useCase($this->account('f0cfa1a3-1ac7-44af-9bf4-b36c9262f028'), false, new InMemoryReportRepository)->execute($this->input(new PostIdentifier('e1954b83-b532-40ae-8b9e-49d488040d0f')));
+        $this->useCase(true, false, new InMemoryReportRepository)->execute($this->input(new PostIdentifier('e1954b83-b532-40ae-8b9e-49d488040d0f')));
     }
 
     public function test_rejects_a_duplicate_report(): void
@@ -64,20 +60,20 @@ final class CreateReportTest extends TestCase
         $repository->existing = $this->report();
 
         $this->expectException(DuplicateReportException::class);
-        $this->useCase($this->account('f0cfa1a3-1ac7-44af-9bf4-b36c9262f028'), true, $repository)->execute($this->input());
+        $this->useCase(true, true, $repository)->execute($this->input());
     }
 
     public function test_rejects_a_self_report(): void
     {
         $this->expectException(SelfReportException::class);
-        $this->useCase($this->account('3b5581e9-16df-4879-b7d2-5d88dca6ab87'), true, new InMemoryReportRepository)->execute($this->input(null, '3b5581e9-16df-4879-b7d2-5d88dca6ab87'));
+        $this->useCase(true, true, new InMemoryReportRepository)->execute($this->input(null, '3b5581e9-16df-4879-b7d2-5d88dca6ab87'));
     }
 
-    private function useCase(?Account $targetAccount, bool $postBelongsToTarget, InMemoryReportRepository $reportRepository): CreateReport
+    private function useCase(bool $targetAccountExists, bool $postBelongsToTarget, InMemoryReportRepository $reportRepository): CreateReport
     {
         return new CreateReport(
             new ImmediateTransactionManager,
-            new InMemoryAccountRepository($targetAccount),
+            new InMemoryAccountRepository($targetAccountExists),
             new FixedTargetPostOwnershipQuery($postBelongsToTarget),
             $reportRepository,
             new FixedReportFactory,
@@ -87,11 +83,6 @@ final class CreateReportTest extends TestCase
     private function input(?PostIdentifier $postIdentifier = null, string $targetAccountIdentifier = 'f0cfa1a3-1ac7-44af-9bf4-b36c9262f028'): CreateReportInput
     {
         return new CreateReportInput(new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'), new AccountIdentifier($targetAccountIdentifier), $postIdentifier, ReportCategory::SPAM, new ReportText(''));
-    }
-
-    private function account(string $identifier): Account
-    {
-        return Account::create(new AccountIdentifier($identifier), new AccountName('対象'), null, new EmailAddress($identifier.'@example.com'), [], new FavoriteTagIdentifiers([]));
     }
 
     private function report(): Report
@@ -107,22 +98,17 @@ final class ImmediateTransactionManager implements TransactionManagerInterface
         return $callback();
     }
 }
+
 final class InMemoryAccountRepository implements AccountRepositoryInterface
 {
-    public function __construct(private ?Account $account) {}
+    public function __construct(private bool $exists) {}
 
-    public function find(AccountIdentifier $accountIdentifier): ?Account
+    public function exists(AccountIdentifier $accountIdentifier): bool
     {
-        return $this->account;
+        return $this->exists;
     }
-
-    public function findByEmailAddress(EmailAddress $emailAddress): ?Account
-    {
-        return null;
-    }
-
-    public function save(Account $account): void {}
 }
+
 final class FixedTargetPostOwnershipQuery implements TargetPostOwnershipQueryInterface
 {
     public function __construct(private bool $belongs) {}
@@ -132,10 +118,12 @@ final class FixedTargetPostOwnershipQuery implements TargetPostOwnershipQueryInt
         return $this->belongs;
     }
 }
+
 final class InMemoryReportRepository implements ReportRepositoryInterface
 {
     public ?Report $existing = null;
 
+    /** @var list<Report> */
     public array $saved = [];
 
     public function findByReporterAndTarget(AccountIdentifier $reporterAccountIdentifier, AccountIdentifier $targetAccountIdentifier): ?Report
@@ -148,6 +136,7 @@ final class InMemoryReportRepository implements ReportRepositoryInterface
         $this->saved[] = $report;
     }
 }
+
 final class FixedReportFactory implements ReportFactoryInterface
 {
     public function create(AccountIdentifier $reporterAccountIdentifier, AccountIdentifier $targetAccountIdentifier, ?PostIdentifier $targetPostIdentifier, ReportCategory $reportCategory, ReportText $reportText): Report

@@ -9,20 +9,18 @@ use Src\Report\Domain\ValueObject\ReportText;
 
 final class ReportTextTest extends TestCase
 {
-    public function test_rejects_an_empty_report_text(): void
+    public function test_accepts_an_empty_report_text(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('通報内容を入力してください。');
+        $reportText = new ReportText('');
 
-        new ReportText('');
+        self::assertSame('', $reportText->value());
     }
 
-    public function test_rejects_a_whitespace_only_report_text(): void
+    public function test_accepts_a_whitespace_only_report_text(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('通報内容を入力してください。');
+        $reportText = new ReportText(" \t\n");
 
-        new ReportText(" \t\n");
+        self::assertSame(" \t\n", $reportText->value());
     }
 
     public function test_rejects_a_report_text_longer_than_500_characters(): void

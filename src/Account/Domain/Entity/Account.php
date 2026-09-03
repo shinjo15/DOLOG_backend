@@ -8,7 +8,7 @@ use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
 use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
-use Src\Account\Domain\ValueObject\SocialLinks;
+use Src\Account\Domain\ValueObject\SocialLink;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 final class Account
@@ -18,7 +18,8 @@ final class Account
         private readonly AccountName $accountName,
         private readonly ?AccountBio $accountBio,
         private readonly EmailAddress $emailAddress,
-        private readonly SocialLinks $socialLinks,
+        /** @var list<SocialLink> */
+        private readonly array $socialLinks,
         private readonly FavoriteTagIdentifiers $favoriteTagIdentifiers,
     ) {}
 
@@ -27,9 +28,19 @@ final class Account
         AccountName $accountName,
         ?AccountBio $accountBio,
         EmailAddress $emailAddress,
-        SocialLinks $socialLinks,
+        array $socialLinks,
         FavoriteTagIdentifiers $favoriteTagIdentifiers,
     ): self {
+        if (! array_is_list($socialLinks)) {
+            throw new \InvalidArgumentException('SNSリンクは一覧で指定する必要があります。');
+        }
+
+        foreach ($socialLinks as $socialLink) {
+            if (! $socialLink instanceof SocialLink) {
+                throw new \InvalidArgumentException('SNSリンクにはSocialLinkのみ指定できます。');
+            }
+        }
+
         return new self(
             accountIdentifier: $accountIdentifier,
             accountName: $accountName,
@@ -60,7 +71,10 @@ final class Account
         return $this->emailAddress;
     }
 
-    public function socialLinks(): SocialLinks
+    /**
+     * @return list<SocialLink>
+     */
+    public function socialLinks(): array
     {
         return $this->socialLinks;
     }

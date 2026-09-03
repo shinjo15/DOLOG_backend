@@ -6,4 +6,4 @@ namespace Src\Account\Domain\ValueObject;
 
 use Src\Shared\Domain\ValueObject\Base\StringValueObject;
 
-final readonly class SocialNetworkType extends StringValueObject {}
+final readonly class SocialType extends StringValueObject {}

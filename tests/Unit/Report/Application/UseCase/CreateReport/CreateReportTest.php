@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Report\Application\UseCase\CreateReport;
 
 use PHPUnit\Framework\TestCase;
-use Src\Report\Application\Query\TargetPostOwnershipQueryInterface;
 use Src\Report\Application\UseCase\CreateReport\CreateReport;
 use Src\Report\Application\UseCase\CreateReport\CreateReportInput;
 use Src\Report\Domain\Entity\Report;
@@ -74,8 +73,7 @@ final class CreateReportTest extends TestCase
         return new CreateReport(
             new ImmediateTransactionManager,
             new InMemoryAccountRepository($targetAccountExists),
-            new FixedTargetPostOwnershipQuery($postBelongsToTarget),
-            $reportRepository,
+            $reportRepository->withPostOwnership($postBelongsToTarget),
             new FixedReportFactory,
         );
     }
@@ -109,19 +107,11 @@ final class InMemoryAccountRepository implements AccountRepositoryInterface
     }
 }
 
-final class FixedTargetPostOwnershipQuery implements TargetPostOwnershipQueryInterface
-{
-    public function __construct(private bool $belongs) {}
-
-    public function belongsToAccount(PostIdentifier $postIdentifier, AccountIdentifier $accountIdentifier): bool
-    {
-        return $this->belongs;
-    }
-}
-
 final class InMemoryReportRepository implements ReportRepositoryInterface
 {
     public ?Report $existing = null;
+
+    private bool $postBelongsToAccount = true;
 
     /** @var list<Report> */
     public array $saved = [];
@@ -129,6 +119,18 @@ final class InMemoryReportRepository implements ReportRepositoryInterface
     public function findByReporterAndTarget(AccountIdentifier $reporterAccountIdentifier, AccountIdentifier $targetAccountIdentifier): ?Report
     {
         return $this->existing;
+    }
+
+    public function existsPostByAccount(PostIdentifier $postIdentifier, AccountIdentifier $accountIdentifier): bool
+    {
+        return $this->postBelongsToAccount;
+    }
+
+    public function withPostOwnership(bool $postBelongsToAccount): self
+    {
+        $this->postBelongsToAccount = $postBelongsToAccount;
+
+        return $this;
     }
 
     public function save(Report $report): void

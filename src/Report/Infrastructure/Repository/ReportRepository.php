@@ -6,6 +6,7 @@ namespace Src\Report\Infrastructure\Repository;
 
 use App\Models\ReportModel;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 use Src\Report\Domain\Entity\Report;
 use Src\Report\Domain\Exception\DuplicateReportException;
 use Src\Report\Domain\Repository\ReportRepositoryInterface;
@@ -25,6 +26,15 @@ final class ReportRepository implements ReportRepositoryInterface
             ->first();
 
         return $model === null ? null : $this->restore($model);
+    }
+
+    public function existsPostByAccount(PostIdentifier $postIdentifier, AccountIdentifier $accountIdentifier): bool
+    {
+        return DB::table('posts')
+            ->join('routines', 'routines.routine_identifier', '=', 'posts.routine_identifier')
+            ->where('posts.post_identifier', $postIdentifier->value())
+            ->where('routines.account_identifier', $accountIdentifier->value())
+            ->exists();
     }
 
     public function save(Report $report): void

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Report\Application\UseCase\CreateReport;
 
-use Src\Report\Application\Query\TargetPostOwnershipQueryInterface;
 use Src\Report\Domain\Exception\DuplicateReportException;
 use Src\Report\Domain\Exception\TargetAccountNotFoundException;
 use Src\Report\Domain\Exception\TargetPostMismatchException;
@@ -18,7 +17,6 @@ final readonly class CreateReport implements CreateReportInterface
     public function __construct(
         private TransactionManagerInterface $transactionManager,
         private AccountRepositoryInterface $accountRepository,
-        private TargetPostOwnershipQueryInterface $targetPostOwnershipQuery,
         private ReportRepositoryInterface $reportRepository,
         private ReportFactoryInterface $reportFactory,
     ) {}
@@ -29,7 +27,7 @@ final readonly class CreateReport implements CreateReportInterface
             if (! $this->accountRepository->exists($input->targetAccountIdentifier())) {
                 throw new TargetAccountNotFoundException;
             }
-            if ($input->targetPostIdentifier() !== null && ! $this->targetPostOwnershipQuery->belongsToAccount($input->targetPostIdentifier(), $input->targetAccountIdentifier())) {
+            if ($input->targetPostIdentifier() !== null && ! $this->reportRepository->existsPostByAccount($input->targetPostIdentifier(), $input->targetAccountIdentifier())) {
                 throw new TargetPostMismatchException;
             }
             if ($this->reportRepository->findByReporterAndTarget($input->reporterAccountIdentifier(), $input->targetAccountIdentifier()) !== null) {

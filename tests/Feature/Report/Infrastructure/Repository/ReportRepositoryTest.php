@@ -13,6 +13,7 @@ use Src\Report\Domain\ValueObject\ReportIdentifier;
 use Src\Report\Domain\ValueObject\ReportText;
 use Src\Report\Infrastructure\Repository\ReportRepository;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
+use Src\Shared\Domain\ValueObject\Identifier\PostIdentifier;
 use Tests\TestCase;
 
 final class ReportRepositoryTest extends TestCase
@@ -40,6 +41,35 @@ final class ReportRepositoryTest extends TestCase
 
         $this->expectException(DuplicateReportException::class);
         $repository->save(new Report(new ReportIdentifier('e1954b83-b532-40ae-8b9e-49d488040d0f'), new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'), new AccountIdentifier('f0cfa1a3-1ac7-44af-9bf4-b36c9262f028'), null, ReportCategory::OTHER, new ReportText('重複')));
+    }
+
+    public function test_confirms_a_post_belongs_to_an_account(): void
+    {
+        $this->insertAccounts();
+        DB::table('routines')->insert([
+            'routine_identifier' => 'e1954b83-b532-40ae-8b9e-49d488040d0f',
+            'routine_name' => '対象のルーティン',
+            'account_identifier' => 'f0cfa1a3-1ac7-44af-9bf4-b36c9262f028',
+            'available' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('posts')->insert([
+            'post_identifier' => 'b0caa7f4-e1da-4f48-a8db-12fcf9bf47d5',
+            'routine_identifier' => 'e1954b83-b532-40ae-8b9e-49d488040d0f',
+            'post_category' => 'routine',
+            'post_like_count' => 0,
+            'post_support_count' => 0,
+            'available' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $repository = new ReportRepository;
+        $postIdentifier = new PostIdentifier('b0caa7f4-e1da-4f48-a8db-12fcf9bf47d5');
+
+        self::assertTrue($repository->existsPostByAccount($postIdentifier, new AccountIdentifier('f0cfa1a3-1ac7-44af-9bf4-b36c9262f028')));
+        self::assertFalse($repository->existsPostByAccount($postIdentifier, new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87')));
     }
 
     private function report(): Report

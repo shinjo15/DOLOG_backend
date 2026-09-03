@@ -26,7 +26,7 @@ final class AccountTest extends TestCase
         $emailAddress = new EmailAddress('user@example.com');
         $socialLinks = [
             new SocialLink(
-                socialType: new SocialType('x'),
+                socialType: SocialType::X,
                 socialUrl: new SocialUrl('https://x.com/example'),
             ),
         ];

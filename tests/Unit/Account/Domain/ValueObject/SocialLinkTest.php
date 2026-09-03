@@ -13,7 +13,7 @@ final class SocialLinkTest extends TestCase
 {
     public function test_retains_a_social_type_and_social_url(): void
     {
-        $socialType = new SocialType('x');
+        $socialType = SocialType::X;
         $socialUrl = new SocialUrl('https://x.com/example');
 
         $socialLink = new SocialLink(

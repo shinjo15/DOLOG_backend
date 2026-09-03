@@ -7,11 +7,11 @@ namespace Tests\Unit\Support\Infrastructure\Query\GetMySupports;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsInput;
-use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsQueryInterface;
-use Src\Support\Infrastructure\Query\GetMySupports\GetMySupportsQuery;
+use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsInterface;
+use Src\Support\Infrastructure\Query\GetMySupports\GetMySupports;
 use Tests\TestCase;
 
-final class GetMySupportsQueryTest extends TestCase
+final class GetMySupportsTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -32,7 +32,7 @@ final class GetMySupportsQueryTest extends TestCase
 
         self::assertSame(10, $input->numberOfItemsPerPage());
 
-        $result = (new GetMySupportsQuery)->execute($input);
+        $result = (new GetMySupports)->execute($input);
 
         self::assertSame(2, $result->total());
         self::assertSame([
@@ -69,7 +69,7 @@ final class GetMySupportsQueryTest extends TestCase
 
         self::assertSame(2, $input->numberOfItemsPerPage());
 
-        $result = (new GetMySupportsQuery)->execute($input);
+        $result = (new GetMySupports)->execute($input);
 
         self::assertSame(3, $result->total());
         self::assertSame([[
@@ -84,7 +84,7 @@ final class GetMySupportsQueryTest extends TestCase
 
     public function test_query_interface_is_bound_to_infrastructure_query(): void
     {
-        self::assertInstanceOf(GetMySupportsQuery::class, $this->app->make(GetMySupportsQueryInterface::class));
+        self::assertInstanceOf(GetMySupports::class, $this->app->make(GetMySupportsInterface::class));
     }
 
     private function createRoutine(string $routineIdentifier): void

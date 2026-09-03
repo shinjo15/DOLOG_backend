@@ -7,11 +7,11 @@ namespace Src\Support\Infrastructure\Query\GetMySupports;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsInputPort;
+use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsInterface;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsOutput;
 use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsOutputPort;
-use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsQueryInterface;
 
-final class GetMySupportsQuery implements GetMySupportsQueryInterface
+final class GetMySupports implements GetMySupportsInterface
 {
     public function execute(GetMySupportsInputPort $input): GetMySupportsOutputPort
     {

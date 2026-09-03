@@ -8,7 +8,7 @@ use App\Http\Requests\Support\GetMySupportsRequest;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 use Src\Shared\Application\Service\AuthServiceInterface;
-use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsQueryInterface;
+use Src\Support\Application\Usecase\Query\GetMySupports\GetMySupportsInterface;
 use Throwable;
 
 use function report;
@@ -16,7 +16,7 @@ use function report;
 final readonly class GetMySupportsAction
 {
     public function __construct(
-        private GetMySupportsQueryInterface $getMySupports,
+        private GetMySupportsInterface $getMySupports,
         private AuthServiceInterface $authService,
     ) {}
 

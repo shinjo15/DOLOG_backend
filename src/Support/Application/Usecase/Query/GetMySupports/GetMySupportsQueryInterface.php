@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Src\Support\Application\UseCase\GetMySupports;
+namespace Src\Support\Application\Usecase\Query\GetMySupports;
 
-interface GetMySupportsInterface
+interface GetMySupportsQueryInterface
 {
     public function execute(GetMySupportsInputPort $input): GetMySupportsOutputPort;
 }

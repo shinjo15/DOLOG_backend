@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Src\Support\Application\UseCase\GetMySupports;
+namespace Src\Support\Application\Usecase\Query\GetMySupports;
 
 interface GetMySupportsOutputPort
 {
     /**
-     * @return array<GetMySupportsItemOutputPort>
+     * @return list<GetMySupportsItemOutputPort>
      */
     public function items(): array;
 

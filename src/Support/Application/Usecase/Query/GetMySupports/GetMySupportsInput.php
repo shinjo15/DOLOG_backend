@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Src\Support\Application\UseCase\GetMySupports;
-
-use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
+namespace Src\Support\Application\Usecase\Query\GetMySupports;
 
 final readonly class GetMySupportsInput implements GetMySupportsInputPort
 {
-    public function __construct(private AccountIdentifier $accountIdentifier, private int $page, private int $perPage) {}
+    public function __construct(
+        private string $accountIdentifier,
+        private int $page,
+        private int $perPage,
+    ) {}
 
-    public function accountIdentifier(): AccountIdentifier
+    public function accountIdentifier(): string
     {
         return $this->accountIdentifier;
     }

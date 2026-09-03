@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Src\Support\Application\UseCase\GetMySupports;
+namespace Src\Support\Application\Usecase\Query\GetMySupports;
 
 final readonly class GetMySupportsOutput implements GetMySupportsOutputPort
 {
     /**
-     * @param  array<GetMySupportsItemOutputPort>  $items
+     * @param  list<GetMySupportsItemOutputPort>  $items
      */
     public function __construct(
         private array $items,

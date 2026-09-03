@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Src\Post\Domain\Entity;
 
+use Src\Post\Domain\Exception\UnsupportedPostLikeException;
 use Src\Post\Domain\Exception\UnsupportedPostSupportException;
 use Src\Post\Domain\ValueObject\PostCategory;
 use Src\Post\Domain\ValueObject\PostLikeCount;
@@ -60,6 +61,21 @@ final class Post
     public function postSupportCount(): PostSupportCount
     {
         return $this->postSupportCount;
+    }
+
+    public function incrementLikeCount(): self
+    {
+        if ($this->postCategory !== PostCategory::ROUTINE) {
+            throw new UnsupportedPostLikeException;
+        }
+
+        return new self(
+            postIdentifier: $this->postIdentifier,
+            routineIdentifier: $this->routineIdentifier,
+            postCategory: $this->postCategory,
+            postLikeCount: new PostLikeCount($this->postLikeCount->value() + 1),
+            postSupportCount: $this->postSupportCount,
+        );
     }
 
     public function incrementSupportCount(): self

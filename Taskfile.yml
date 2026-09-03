@@ -46,3 +46,9 @@ tasks:
     desc: appコンテナのシェルを開く
     cmds:
       - docker compose exec app bash
+
+  mailpit-check:
+    desc: Mailpitへ登録完了メールを送信して開発用SMTP接続を確認する
+    cmds:
+      - >-
+        docker compose exec --no-TTY --env XDG_CONFIG_HOME=/tmp app php artisan tinker --execute="Illuminate\\Support\\Facades\\Mail::to('mailpit-check@dolog.local')->send(new Src\\Account\\Infrastructure\\Mail\\AccountRegistrationMail('Mailpit確認ユーザー'));"

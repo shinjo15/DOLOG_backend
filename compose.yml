@@ -7,4 +7,14 @@ services:
     user: "${DOCKER_UID:-1000}:${DOCKER_GID:-1000}"
     volumes:
       - .:/var/www/html
+    environment:
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
+      - MAIL_FROM_ADDRESS=no-reply@dolog.local
+      - MAIL_FROM_NAME=${APP_NAME}
     command: php artisan serve --host=0.0.0.0 --port=8000
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8026:8025"

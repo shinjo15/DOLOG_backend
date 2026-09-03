@@ -4,6 +4,14 @@ namespace App\Providers;
 
 use App\Support\LaravelUuidServices;
 use Illuminate\Support\ServiceProvider;
+use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
+use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
+use Src\Account\Application\UseCase\CreateAccount\CreateAccountInterface;
+use Src\Account\Domain\Factory\AccountFactoryInterface;
+use Src\Account\Domain\Repository\AccountRepositoryInterface;
+use Src\Account\Infrastructure\Factory\AccountFactory;
+use Src\Account\Infrastructure\Repository\AccountRepository;
+use Src\Account\Infrastructure\Service\LaravelAccountRegistrationMailService;
 use Src\Like\Application\UseCase\CreateLike\CreateLike;
 use Src\Like\Application\UseCase\CreateLike\CreateLikeInterface;
 use Src\Like\Application\Usecase\Query\GetMyLikes\GetMyLikesInterface;
@@ -55,6 +63,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(AuthServiceInterface::class, LaravelAuthService::class);
         $this->app->bind(UuidServiceInterface::class, LaravelUuidServices::class);
+        $this->app->bind(AccountFactoryInterface::class, AccountFactory::class);
+        $this->app->bind(AccountRepositoryInterface::class, AccountRepository::class);
+        $this->app->bind(AccountRegistrationMailServiceInterface::class, LaravelAccountRegistrationMailService::class);
+        $this->app->bind(CreateAccountInterface::class, CreateAccount::class);
         $this->app->bind(TagFactoryInterface::class, TagFactory::class);
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
         $this->app->bind(CreateTagInterface::class, CreateTag::class);

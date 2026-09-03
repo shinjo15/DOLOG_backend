@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Src\Authentication\Domain\ValueObject;
+
+use Src\Shared\Domain\ValueObject\Base\StringValueObject;
+
+final readonly class LoginPasscodeHash extends StringValueObject
+{
+    protected function invalidMessage(): string
+    {
+        return 'ログインパスコードハッシュは空にできません。';
+    }
+}

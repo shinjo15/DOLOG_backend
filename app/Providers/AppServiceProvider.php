@@ -12,6 +12,22 @@ use Src\Account\Domain\Repository\AccountRepositoryInterface;
 use Src\Account\Infrastructure\Factory\AccountFactory;
 use Src\Account\Infrastructure\Repository\AccountRepository;
 use Src\Account\Infrastructure\Service\LaravelAccountRegistrationMailService;
+use Src\Authentication\Application\Service\LoginPasscodeGeneratorServiceInterface;
+use Src\Authentication\Application\Service\LoginPasscodeHashServiceInterface;
+use Src\Authentication\Application\Service\LoginPasscodeMailServiceInterface;
+use Src\Authentication\Application\Service\LoginPasscodeStateServiceInterface;
+use Src\Authentication\Application\Service\PasscodeSessionServiceInterface;
+use Src\Authentication\Application\UseCase\GenerateLoginPasscode\GenerateLoginPasscode;
+use Src\Authentication\Application\UseCase\GenerateLoginPasscode\GenerateLoginPasscodeInterface;
+use Src\Authentication\Application\UseCase\VerifyLoginPasscode\VerifyLoginPasscode;
+use Src\Authentication\Application\UseCase\VerifyLoginPasscode\VerifyLoginPasscodeInterface;
+use Src\Authentication\Domain\Factory\LoginPasscodeChallengeFactoryInterface;
+use Src\Authentication\Infrastructure\Factory\LoginPasscodeChallengeFactory;
+use Src\Authentication\Infrastructure\Service\LaravelPasscodeSessionService;
+use Src\Authentication\Infrastructure\Service\LoginPasscodeGeneratorService;
+use Src\Authentication\Infrastructure\Service\LoginPasscodeHashService;
+use Src\Authentication\Infrastructure\Service\LoginPasscodeMailService;
+use Src\Authentication\Infrastructure\Service\RedisLoginPasscodeStateService;
 use Src\Like\Application\UseCase\CreateLike\CreateLike;
 use Src\Like\Application\UseCase\CreateLike\CreateLikeInterface;
 use Src\Like\Application\Usecase\Query\GetMyLikes\GetMyLikesInterface;
@@ -62,6 +78,14 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AuthServiceInterface::class, LaravelAuthService::class);
+        $this->app->bind(LoginPasscodeGeneratorServiceInterface::class, LoginPasscodeGeneratorService::class);
+        $this->app->bind(LoginPasscodeHashServiceInterface::class, LoginPasscodeHashService::class);
+        $this->app->bind(LoginPasscodeMailServiceInterface::class, LoginPasscodeMailService::class);
+        $this->app->bind(LoginPasscodeStateServiceInterface::class, RedisLoginPasscodeStateService::class);
+        $this->app->bind(PasscodeSessionServiceInterface::class, LaravelPasscodeSessionService::class);
+        $this->app->bind(LoginPasscodeChallengeFactoryInterface::class, LoginPasscodeChallengeFactory::class);
+        $this->app->bind(GenerateLoginPasscodeInterface::class, GenerateLoginPasscode::class);
+        $this->app->bind(VerifyLoginPasscodeInterface::class, VerifyLoginPasscode::class);
         $this->app->bind(UuidServiceInterface::class, LaravelUuidServices::class);
         $this->app->bind(AccountFactoryInterface::class, AccountFactory::class);
         $this->app->bind(AccountRepositoryInterface::class, AccountRepository::class);

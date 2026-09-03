@@ -7,6 +7,7 @@ namespace Src\Shared\Infrastructure\Service;
 use Illuminate\Http\Request;
 use RuntimeException;
 use Src\Shared\Application\Service\AuthServiceInterface;
+use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 final readonly class LaravelAuthService implements AuthServiceInterface
 {
@@ -15,6 +16,12 @@ final readonly class LaravelAuthService implements AuthServiceInterface
     public function __construct(
         private Request $request,
     ) {}
+
+    public function login(AccountIdentifier $accountIdentifier): void
+    {
+        $this->request->session()->regenerate();
+        $this->request->session()->put(self::SESSION_KEY, $accountIdentifier->value());
+    }
 
     public function accountIdentifier(): string
     {

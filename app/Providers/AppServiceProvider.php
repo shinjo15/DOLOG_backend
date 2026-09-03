@@ -40,6 +40,14 @@ use Src\Post\Domain\Factory\PostFactoryInterface;
 use Src\Post\Domain\Repository\PostRepositoryInterface;
 use Src\Post\Infrastructure\Factory\PostFactory;
 use Src\Post\Infrastructure\Repository\PostRepository;
+use Src\Report\Application\Query\TargetPostOwnershipQueryInterface;
+use Src\Report\Application\UseCase\CreateReport\CreateReport;
+use Src\Report\Application\UseCase\CreateReport\CreateReportInterface;
+use Src\Report\Domain\Factory\ReportFactoryInterface;
+use Src\Report\Domain\Repository\ReportRepositoryInterface;
+use Src\Report\Infrastructure\Factory\ReportFactory;
+use Src\Report\Infrastructure\Query\TargetPostOwnershipQuery;
+use Src\Report\Infrastructure\Repository\ReportRepository;
 use Src\Routine\Application\UseCase\CreateRoutine\CreateRoutine;
 use Src\Routine\Application\UseCase\CreateRoutine\CreateRoutineInterface;
 use Src\Routine\Domain\Factory\RoutineActionFactoryInterface;
@@ -110,6 +118,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PostFactoryInterface::class, PostFactory::class);
         $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
         $this->app->bind(CreateRoutineInterface::class, CreateRoutine::class);
+        $this->app->bind(ReportFactoryInterface::class, ReportFactory::class);
+        $this->app->bind(ReportRepositoryInterface::class, ReportRepository::class);
+        $this->app->bind(TargetPostOwnershipQueryInterface::class, TargetPostOwnershipQuery::class);
+        $this->app->bind(CreateReportInterface::class, CreateReport::class);
     }
 
     /**

@@ -22,11 +22,23 @@ use Src\Shared\Domain\ValueObject\Identifier\TagIdentifier;
 
 final class AccountRepository implements AccountRepositoryInterface
 {
+    public function find(AccountIdentifier $accountIdentifier): ?Account
+    {
+        $model = AccountModel::query()->with(['socialLinks', 'favoriteTags'])->where('account_identifier', $accountIdentifier->value())->first();
+
+        return $model === null ? null : $this->restore($model);
+    }
+
     public function findByEmailAddress(EmailAddress $emailAddress): ?Account
     {
         $model = AccountModel::query()->with(['socialLinks', 'favoriteTags'])->where('email_address', $emailAddress->value())->first();
 
-        return $model === null ? null : Account::create(
+        return $model === null ? null : $this->restore($model);
+    }
+
+    private function restore(AccountModel $model): Account
+    {
+        return Account::create(
             new AccountIdentifier($model->account_identifier), new AccountName($model->account_name),
             $model->account_bio === null ? null : new AccountBio($model->account_bio), new EmailAddress($model->email_address),
             $model->socialLinks->map(static fn (AccountSocialLinkModel $socialLink): SocialLink => new SocialLink(SocialType::from($socialLink->type), new SocialUrl($socialLink->url)))->all(),

@@ -8,7 +8,6 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Src\Account\Domain\Entity\Account;
-use Src\Account\Domain\Entity\AccountCredential;
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
@@ -16,7 +15,6 @@ use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
 use Src\Account\Domain\ValueObject\SocialLink;
 use Src\Account\Domain\ValueObject\SocialType;
 use Src\Account\Domain\ValueObject\SocialUrl;
-use Src\Account\Infrastructure\Repository\AccountCredentialRepository;
 use Src\Account\Infrastructure\Repository\AccountRepository;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 use Src\Shared\Domain\ValueObject\Identifier\TagIdentifier;
@@ -80,22 +78,6 @@ final class AccountRepositoryTest extends TestCase
         $this->assertDatabaseCount('favorite_tags', 0);
         self::assertSame([], $restoredAccount?->socialLinks());
         self::assertSame([], $restoredAccount?->favoriteTagIdentifiers()->values());
-    }
-
-    public function test_persists_only_a_hash_in_the_credential_table(): void
-    {
-        (new AccountRepository)->save(Account::create(
-            new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'), new AccountName('朝活ユーザー'), null,
-            new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]),
-        ));
-
-        (new AccountCredentialRepository)->save(AccountCredential::create(
-            new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'),
-            '$2y$12$hashed-passcode',
-        ));
-
-        $this->assertDatabaseHas('account_credentials', ['account_identifier' => '3b5581e9-16df-4879-b7d2-5d88dca6ab87', 'passcode_hash' => '$2y$12$hashed-passcode']);
-        $this->assertDatabaseMissing('account_credentials', ['passcode_hash' => 'password']);
     }
 
     public function test_database_rejects_duplicate_email_addresses(): void

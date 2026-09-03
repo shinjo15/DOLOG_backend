@@ -37,18 +37,10 @@ return new class extends Migration
             $table->foreign('account_identifier')->references('account_identifier')->on('accounts')->cascadeOnDelete();
             $table->unique(['account_identifier', 'position']);
         });
-
-        Schema::create('account_credentials', function (Blueprint $table): void {
-            $table->uuid('account_identifier')->primary();
-            $table->string('passcode_hash');
-            $table->timestamps();
-            $table->foreign('account_identifier')->references('account_identifier')->on('accounts')->cascadeOnDelete();
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('account_credentials');
         Schema::dropIfExists('account_social_links');
         Schema::dropIfExists('favorite_tags');
         Schema::dropIfExists('accounts');

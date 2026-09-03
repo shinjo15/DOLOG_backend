@@ -7,7 +7,6 @@ namespace App\Http\Requests\Account;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
-use Src\Account\Application\ValueObject\Passcode;
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
@@ -30,7 +29,6 @@ final class CreateAccountRequest extends FormRequest
             'account_name' => ['required', 'string', 'max:50'],
             'account_bio' => ['nullable', 'string', 'max:300'],
             'email_address' => ['required', 'email'],
-            'passcode' => ['required', 'string', 'min:8', 'max:72'],
             'social_links' => ['required', 'array'],
             'social_links.*.social_type' => ['required', Rule::enum(SocialType::class)],
             'social_links.*.social_url' => ['required', 'url'],
@@ -60,7 +58,6 @@ final class CreateAccountRequest extends FormRequest
                     $v['favorite_tag_identifiers'],
                 ),
             ),
-            new Passcode($v['passcode']),
         );
     }
 }

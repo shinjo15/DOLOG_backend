@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Account\Application\UseCase\CreateAccount;
 
-use Src\Account\Application\ValueObject\Passcode;
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
@@ -23,6 +22,4 @@ interface CreateAccountInputPort
     public function socialLinks(): array;
 
     public function favoriteTagIdentifiers(): FavoriteTagIdentifiers;
-
-    public function passcode(): Passcode;
 }

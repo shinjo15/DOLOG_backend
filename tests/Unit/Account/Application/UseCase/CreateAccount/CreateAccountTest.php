@@ -6,15 +6,11 @@ namespace Tests\Unit\Account\Application\UseCase\CreateAccount;
 
 use PHPUnit\Framework\TestCase;
 use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
-use Src\Account\Application\Service\PasscodeHashingServiceInterface;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
-use Src\Account\Application\ValueObject\Passcode;
 use Src\Account\Domain\Entity\Account;
-use Src\Account\Domain\Entity\AccountCredential;
 use Src\Account\Domain\Exception\DuplicateEmailAddressException;
 use Src\Account\Domain\Factory\AccountFactoryInterface;
-use Src\Account\Domain\Repository\AccountCredentialRepositoryInterface;
 use Src\Account\Domain\Repository\AccountRepositoryInterface;
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
@@ -25,7 +21,7 @@ use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 final class CreateAccountTest extends TestCase
 {
-    public function test_saves_an_account_and_its_hashed_passcode_then_sends_a_registration_email(): void
+    public function test_saves_an_account_then_sends_a_registration_email(): void
     {
         $account = Account::create(
             new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'),
@@ -36,14 +32,11 @@ final class CreateAccountTest extends TestCase
             new FavoriteTagIdentifiers([]),
         );
         $accountRepository = new InMemoryAccountRepository;
-        $credentialRepository = new InMemoryAccountCredentialRepository;
         $mailService = new FakeAccountRegistrationMailService;
 
         (new CreateAccount(
             accountRepository: $accountRepository,
-            accountCredentialRepository: $credentialRepository,
             accountFactory: new FakeAccountFactory($account),
-            passcodeHashingService: new FakePasscodeHashingService,
             accountRegistrationMailService: $mailService,
             transactionManager: new ImmediateTransactionManager,
         ))->execute(new CreateAccountInput(
@@ -52,12 +45,9 @@ final class CreateAccountTest extends TestCase
             emailAddress: new EmailAddress('user@example.com'),
             socialLinks: [],
             favoriteTagIdentifiers: new FavoriteTagIdentifiers([]),
-            passcode: new Passcode('password'),
         ));
 
         self::assertSame($account, $accountRepository->savedAccount);
-        self::assertSame('3b5581e9-16df-4879-b7d2-5d88dca6ab87', $credentialRepository->savedCredential?->accountIdentifier()->value());
-        self::assertSame('hashed-password', $credentialRepository->savedCredential?->passcodeHash());
         self::assertSame(['user@example.com', '朝活ユーザー'], $mailService->sentTo);
     }
 
@@ -68,20 +58,17 @@ final class CreateAccountTest extends TestCase
             new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'), new AccountName('既存ユーザー'), null,
             new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]),
         );
-        $credentialRepository = new InMemoryAccountCredentialRepository;
         $mailService = new FakeAccountRegistrationMailService;
 
         $this->expectException(DuplicateEmailAddressException::class);
 
         (new CreateAccount(
             accountRepository: $accountRepository,
-            accountCredentialRepository: $credentialRepository,
             accountFactory: new FakeAccountFactory($accountRepository->existingAccount),
-            passcodeHashingService: new FakePasscodeHashingService,
             accountRegistrationMailService: $mailService,
             transactionManager: new ImmediateTransactionManager,
         ))->execute(new CreateAccountInput(
-            new AccountName('朝活ユーザー'), null, new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]), new Passcode('password'),
+            new AccountName('朝活ユーザー'), null, new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]),
         ));
     }
 }
@@ -102,15 +89,6 @@ final class InMemoryAccountRepository implements AccountRepositoryInterface
         $this->savedAccount = $account;
     }
 }
-final class InMemoryAccountCredentialRepository implements AccountCredentialRepositoryInterface
-{
-    public ?AccountCredential $savedCredential = null;
-
-    public function save(AccountCredential $credential): void
-    {
-        $this->savedCredential = $credential;
-    }
-}
 final readonly class FakeAccountFactory implements AccountFactoryInterface
 {
     public function __construct(private Account $account) {}
@@ -118,13 +96,6 @@ final readonly class FakeAccountFactory implements AccountFactoryInterface
     public function create(AccountName $accountName, ?AccountBio $accountBio, EmailAddress $emailAddress, array $socialLinks, FavoriteTagIdentifiers $favoriteTagIdentifiers): Account
     {
         return $this->account;
-    }
-}
-final class FakePasscodeHashingService implements PasscodeHashingServiceInterface
-{
-    public function hash(Passcode $passcode): string
-    {
-        return 'hashed-'.$passcode->value();
     }
 }
 final class FakeAccountRegistrationMailService implements AccountRegistrationMailServiceInterface

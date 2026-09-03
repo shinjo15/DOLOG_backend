@@ -15,10 +15,19 @@ return new class extends Migration
             $table->string('account_name', 50);
             $table->string('account_bio', 300)->nullable();
             $table->string('email_address')->unique();
-            $table->json('social_links');
             $table->json('favorite_tag_identifiers');
             $table->boolean('available')->default(true);
             $table->timestamps();
+        });
+
+        Schema::create('account_social_links', function (Blueprint $table): void {
+            $table->uuid('account_identifier');
+            $table->string('type');
+            $table->string('url');
+            $table->unsignedInteger('position');
+            $table->timestamps();
+            $table->foreign('account_identifier')->references('account_identifier')->on('accounts')->cascadeOnDelete();
+            $table->unique(['account_identifier', 'position']);
         });
 
         Schema::create('account_credentials', function (Blueprint $table): void {
@@ -32,6 +41,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('account_credentials');
+        Schema::dropIfExists('account_social_links');
         Schema::dropIfExists('accounts');
     }
 };

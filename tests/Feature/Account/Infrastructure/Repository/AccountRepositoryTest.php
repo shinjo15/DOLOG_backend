@@ -25,12 +25,15 @@ final class AccountRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_saves_and_restores_an_account_profile_without_a_passcode(): void
+    public function test_saves_social_links_with_their_type_url_and_order_and_restores_them(): void
     {
         $account = Account::create(
             new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'), new AccountName('朝活ユーザー'),
             new AccountBio('朝の時間を大切にしています。'), new EmailAddress('user@example.com'),
-            [new SocialLink(SocialType::X, new SocialUrl('https://x.com/example'))],
+            [
+                new SocialLink(SocialType::INSTAGRAM, new SocialUrl('https://instagram.com/example')),
+                new SocialLink(SocialType::X, new SocialUrl('https://x.com/example')),
+            ],
             new FavoriteTagIdentifiers([new TagIdentifier('b0caa7f4-e1da-4f48-a8db-12fcf9bf47d5')]),
         );
         $repository = new AccountRepository;
@@ -38,10 +41,37 @@ final class AccountRepositoryTest extends TestCase
         $repository->save($account);
         $restoredAccount = $repository->findByEmailAddress(new EmailAddress('user@example.com'));
 
+        $this->assertDatabaseHas('account_social_links', [
+            'account_identifier' => '3b5581e9-16df-4879-b7d2-5d88dca6ab87',
+            'type' => 'instagram',
+            'url' => 'https://instagram.com/example',
+            'position' => 0,
+        ]);
+        $this->assertDatabaseHas('account_social_links', [
+            'account_identifier' => '3b5581e9-16df-4879-b7d2-5d88dca6ab87',
+            'type' => 'x',
+            'url' => 'https://x.com/example',
+            'position' => 1,
+        ]);
         self::assertSame('3b5581e9-16df-4879-b7d2-5d88dca6ab87', $restoredAccount?->accountIdentifier()->value());
         self::assertSame('朝の時間を大切にしています。', $restoredAccount?->accountBio()?->value());
-        self::assertSame('x', $restoredAccount?->socialLinks()[0]->socialType()->value);
+        self::assertSame(['instagram', 'x'], array_map(static fn (SocialLink $socialLink): string => $socialLink->socialType()->value, $restoredAccount?->socialLinks() ?? []));
+        self::assertSame(['https://instagram.com/example', 'https://x.com/example'], array_map(static fn (SocialLink $socialLink): string => $socialLink->socialUrl()->value(), $restoredAccount?->socialLinks() ?? []));
         self::assertSame(['b0caa7f4-e1da-4f48-a8db-12fcf9bf47d5'], array_map(static fn (TagIdentifier $identifier): string => $identifier->value(), $restoredAccount?->favoriteTagIdentifiers()->values() ?? []));
+    }
+
+    public function test_saves_and_restores_an_account_without_social_links(): void
+    {
+        $account = Account::create(
+            new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'), new AccountName('朝活ユーザー'), null,
+            new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]),
+        );
+
+        (new AccountRepository)->save($account);
+        $restoredAccount = (new AccountRepository)->findByEmailAddress(new EmailAddress('user@example.com'));
+
+        $this->assertDatabaseCount('account_social_links', 0);
+        self::assertSame([], $restoredAccount?->socialLinks());
     }
 
     public function test_persists_only_a_hash_in_the_credential_table(): void

@@ -24,7 +24,14 @@ final class CreateAccountActionTest extends TestCase
         self::assertSame('', $response->getContent());
         self::assertStringNotContainsString('password', $response->getContent());
         $this->assertDatabaseHas('accounts', ['email_address' => 'user@example.com', 'account_name' => '朝活ユーザー']);
-        $credential = $this->app['db']->table('account_credentials')->where('account_identifier', $this->app['db']->table('accounts')->where('email_address', 'user@example.com')->value('account_identifier'))->value('passcode_hash');
+        $accountIdentifier = $this->app['db']->table('accounts')->where('email_address', 'user@example.com')->value('account_identifier');
+        $this->assertDatabaseHas('account_social_links', [
+            'account_identifier' => $accountIdentifier,
+            'type' => 'x',
+            'url' => 'https://x.com/example',
+            'position' => 0,
+        ]);
+        $credential = $this->app['db']->table('account_credentials')->where('account_identifier', $accountIdentifier)->value('passcode_hash');
         self::assertNotSame('password', $credential);
         self::assertTrue(Hash::check('password', $credential));
         Mail::assertSent(AccountRegistrationMail::class, fn (AccountRegistrationMail $mail): bool => $mail->hasTo('user@example.com'));

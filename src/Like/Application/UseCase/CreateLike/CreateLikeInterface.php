@@ -6,5 +6,5 @@ namespace Src\Like\Application\UseCase\CreateLike;
 
 interface CreateLikeInterface
 {
-    public function execute(CreateLikeInput $input): void;
+    public function execute(CreateLikeInputPort $input): void;
 }

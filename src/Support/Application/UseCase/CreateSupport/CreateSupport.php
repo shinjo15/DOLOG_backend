@@ -15,17 +15,17 @@ final readonly class CreateSupport implements CreateSupportInterface
 {
     public function __construct(private TransactionManagerInterface $transactionManager, private PostRepositoryInterface $postRepository, private SupportRepositoryInterface $supportRepository, private SupportFactoryInterface $supportFactory) {}
 
-    public function execute(CreateSupportInput $input): void
+    public function execute(CreateSupportInputPort $input): void
     {
         $this->transactionManager->transaction(function () use ($input): void {
-            $post = $this->postRepository->find($input->postIdentifier);
+            $post = $this->postRepository->find($input->postIdentifier());
             if ($post === null) {
                 throw new PostNotFoundForSupportException;
             }
-            if ($this->supportRepository->exists($input->accountIdentifier, $input->postIdentifier)) {
+            if ($this->supportRepository->exists($input->accountIdentifier(), $input->postIdentifier())) {
                 throw new AlreadySupportedException;
             }
-            $this->supportRepository->save($this->supportFactory->create($input->accountIdentifier, $input->postIdentifier));
+            $this->supportRepository->save($this->supportFactory->create($input->accountIdentifier(), $input->postIdentifier()));
             $this->postRepository->save($post->incrementSupportCount());
         });
     }

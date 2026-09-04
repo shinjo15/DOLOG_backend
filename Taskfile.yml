@@ -16,6 +16,11 @@ tasks:
     cmds:
       - docker compose exec --no-TTY app php artisan test --compact {{.CLI_ARGS}}
 
+  seed-demo:
+    desc: "UI確認用のデモデータをDocker Compose内のDBへ投入する"
+    cmds:
+      - docker compose exec --no-TTY app php artisan db:seed --class=Database\\Seeders\\DemoDataSeeder --force
+
   coverage:
     desc: "PCOVでsrcとappのテストカバレッジをDockerコンテナ内で計測する"
     cmds:

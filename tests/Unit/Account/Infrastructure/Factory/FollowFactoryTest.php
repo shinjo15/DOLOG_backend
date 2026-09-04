@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Account\Follow\Infrastructure\Factory;
+namespace Tests\Unit\Account\Infrastructure\Factory;
 
 use PHPUnit\Framework\TestCase;
-use Src\Account\Follow\Infrastructure\Factory\FollowFactory;
+use Src\Account\Infrastructure\Factory\FollowFactory;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 final class FollowFactoryTest extends TestCase

@@ -30,14 +30,14 @@ use Src\Authentication\Infrastructure\Service\LoginPasscodeGeneratorService;
 use Src\Authentication\Infrastructure\Service\LoginPasscodeHashService;
 use Src\Authentication\Infrastructure\Service\LoginPasscodeMailService;
 use Src\Authentication\Infrastructure\Service\RedisLoginPasscodeStateService;
-use Src\Account\Follow\Application\UseCase\CreateFollow\CreateFollow;
-use Src\Account\Follow\Application\UseCase\CreateFollow\CreateFollowInterface;
-use Src\Account\Follow\Domain\Factory\FollowFactoryInterface;
-use Src\Account\Follow\Domain\Repository\AccountRepositoryInterface as FollowAccountRepositoryInterface;
-use Src\Account\Follow\Domain\Repository\FollowRepositoryInterface;
-use Src\Account\Follow\Infrastructure\Factory\FollowFactory;
-use Src\Account\Follow\Infrastructure\Repository\AccountRepository as FollowAccountRepository;
-use Src\Account\Follow\Infrastructure\Repository\FollowRepository;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollow;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollowInterface;
+use Src\Account\Domain\Factory\FollowFactoryInterface;
+
+use Src\Account\Domain\Repository\FollowRepositoryInterface;
+use Src\Account\Infrastructure\Factory\FollowFactory;
+
+use Src\Account\Infrastructure\Repository\FollowRepository;
 use Src\Like\Application\UseCase\CreateLike\CreateLike;
 use Src\Like\Application\UseCase\CreateLike\CreateLikeInterface;
 use Src\Like\Application\Usecase\Query\GetMyLikes\GetMyLikesInterface;
@@ -120,7 +120,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GetMyLikesInterface::class, GetMyLikes::class);
         $this->app->bind(FollowFactoryInterface::class, FollowFactory::class);
         $this->app->bind(FollowRepositoryInterface::class, FollowRepository::class);
-        $this->app->bind(FollowAccountRepositoryInterface::class, FollowAccountRepository::class);
+
         $this->app->bind(CreateFollowInterface::class, CreateFollow::class);
         $this->app->bind(SupportFactoryInterface::class, SupportFactory::class);
         $this->app->bind(SupportRepositoryInterface::class, SupportRepository::class);

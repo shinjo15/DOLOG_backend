@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Src\Account\Follow\Infrastructure\Repository;
+namespace Src\Account\Infrastructure\Repository;
 
 use App\Models\FollowModel;
 use Illuminate\Database\UniqueConstraintViolationException;
-use Src\Account\Follow\Domain\Entity\Follow;
-use Src\Account\Follow\Domain\Exception\DuplicateFollowException;
-use Src\Account\Follow\Domain\Repository\FollowRepositoryInterface;
+use Src\Account\Domain\Entity\Follow;
+use Src\Account\Domain\Exception\DuplicateFollowException;
+use Src\Account\Domain\Repository\FollowRepositoryInterface;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 final class FollowRepository implements FollowRepositoryInterface

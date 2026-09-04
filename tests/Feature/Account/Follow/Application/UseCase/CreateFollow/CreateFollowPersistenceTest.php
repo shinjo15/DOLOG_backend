@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Account\Follow\Application\UseCase\CreateFollow;
+namespace Tests\Feature\Account\Application\UseCase\CreateFollow;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Src\Account\Follow\Application\UseCase\CreateFollow\CreateFollowInput;
-use Src\Account\Follow\Application\UseCase\CreateFollow\CreateFollowInterface;
-use Src\Account\Follow\Domain\Exception\DuplicateFollowException;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollowInput;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollowInterface;
+use Src\Account\Domain\Exception\DuplicateFollowException;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 use Tests\TestCase;
 

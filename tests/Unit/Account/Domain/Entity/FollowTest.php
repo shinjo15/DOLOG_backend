@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Account\Follow\Domain\Entity;
+namespace Tests\Unit\Account\Domain\Entity;
 
 use PHPUnit\Framework\TestCase;
-use Src\Account\Follow\Domain\Entity\Follow;
-use Src\Account\Follow\Domain\Exception\SelfFollowException;
+use Src\Account\Domain\Entity\Follow;
+use Src\Account\Domain\Exception\SelfFollowException;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 final class FollowTest extends TestCase

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Actions\Follow;
+namespace App\Http\Actions\Account;
 
 use App\Http\Requests\Follow\CreateFollowRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use RuntimeException;
-use Src\Account\Follow\Application\UseCase\CreateFollow\CreateFollowInterface;
-use Src\Account\Follow\Domain\Exception\DuplicateFollowException;
-use Src\Account\Follow\Domain\Exception\FollowedAccountNotFoundException;
-use Src\Account\Follow\Domain\Exception\SelfFollowException;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollowInterface;
+use Src\Account\Domain\Exception\DuplicateFollowException;
+use Src\Account\Domain\Exception\FollowedAccountNotFoundException;
+use Src\Account\Domain\Exception\SelfFollowException;
 use Src\Shared\Application\Service\AuthServiceInterface;
 
 final readonly class CreateFollowAction

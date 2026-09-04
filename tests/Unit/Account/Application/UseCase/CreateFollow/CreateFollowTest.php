@@ -2,18 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Account\Follow\Application\UseCase\CreateFollow;
+namespace Tests\Unit\Account\Application\UseCase\CreateFollow;
 
 use PHPUnit\Framework\TestCase;
-use Src\Account\Follow\Application\UseCase\CreateFollow\CreateFollow;
-use Src\Account\Follow\Application\UseCase\CreateFollow\CreateFollowInput;
-use Src\Account\Follow\Domain\Entity\Follow;
-use Src\Account\Follow\Domain\Exception\DuplicateFollowException;
-use Src\Account\Follow\Domain\Exception\FollowedAccountNotFoundException;
-use Src\Account\Follow\Domain\Exception\SelfFollowException;
-use Src\Account\Follow\Domain\Factory\FollowFactoryInterface;
-use Src\Account\Follow\Domain\Repository\AccountRepositoryInterface;
-use Src\Account\Follow\Domain\Repository\FollowRepositoryInterface;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollow;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollowInput;
+use Src\Account\Domain\Entity\Account;
+use Src\Account\Domain\Entity\Follow;
+use Src\Account\Domain\Exception\DuplicateFollowException;
+use Src\Account\Domain\Exception\FollowedAccountNotFoundException;
+use Src\Account\Domain\Exception\SelfFollowException;
+use Src\Account\Domain\Factory\FollowFactoryInterface;
+use Src\Account\Domain\Repository\AccountRepositoryInterface;
+use Src\Account\Domain\Repository\FollowRepositoryInterface;
+use Src\Account\Domain\ValueObject\AccountName;
+use Src\Account\Domain\ValueObject\EmailAddress;
+use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
 use Src\Shared\Application\Transaction\TransactionManagerInterface;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
@@ -111,9 +115,29 @@ final class InMemoryAccountRepository implements AccountRepositoryInterface
 {
     public function __construct(private bool $exists) {}
 
-    public function exists(AccountIdentifier $followedAccountIdentifier): bool
+    public function find(AccountIdentifier $accountIdentifier): ?Account
     {
-        return $this->exists;
+        if (! $this->exists) {
+            return null;
+        }
+
+        return Account::create(
+            $accountIdentifier,
+            new AccountName('対象アカウント'),
+            null,
+            new EmailAddress('target@example.com'),
+            [],
+            new FavoriteTagIdentifiers([]),
+        );
+    }
+
+    public function findByEmailAddress(EmailAddress $emailAddress): ?Account
+    {
+        return null;
+    }
+
+    public function save(Account $account): void
+    {
     }
 }
 

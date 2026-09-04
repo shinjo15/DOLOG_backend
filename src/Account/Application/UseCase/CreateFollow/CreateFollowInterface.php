@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Account\Follow\Application\UseCase\CreateFollow;
+namespace Src\Account\Application\UseCase\CreateFollow;
 
 interface CreateFollowInterface
 {

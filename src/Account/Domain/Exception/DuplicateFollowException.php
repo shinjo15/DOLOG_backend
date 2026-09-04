@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Account\Follow\Domain\Exception;
+namespace Src\Account\Domain\Exception;
 
 final class DuplicateFollowException extends \DomainException
 {

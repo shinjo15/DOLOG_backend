@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Src\Account\Follow\Infrastructure\Factory;
+namespace Src\Account\Infrastructure\Factory;
 
-use Src\Account\Follow\Domain\Entity\Follow;
-use Src\Account\Follow\Domain\Factory\FollowFactoryInterface;
+use Src\Account\Domain\Entity\Follow;
+use Src\Account\Domain\Factory\FollowFactoryInterface;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 final class FollowFactory implements FollowFactoryInterface

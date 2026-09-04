@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Src\Account\Follow\Application\UseCase\CreateFollow;
+namespace Src\Account\Application\UseCase\CreateFollow;
 
-use Src\Account\Follow\Domain\Exception\DuplicateFollowException;
-use Src\Account\Follow\Domain\Exception\FollowedAccountNotFoundException;
-use Src\Account\Follow\Domain\Factory\FollowFactoryInterface;
-use Src\Account\Follow\Domain\Repository\AccountRepositoryInterface;
-use Src\Account\Follow\Domain\Repository\FollowRepositoryInterface;
+use Src\Account\Domain\Exception\DuplicateFollowException;
+use Src\Account\Domain\Exception\FollowedAccountNotFoundException;
+use Src\Account\Domain\Factory\FollowFactoryInterface;
+use Src\Account\Domain\Repository\AccountRepositoryInterface;
+use Src\Account\Domain\Repository\FollowRepositoryInterface;
 use Src\Shared\Application\Transaction\TransactionManagerInterface;
 
 final readonly class CreateFollow implements CreateFollowInterface
@@ -23,7 +23,7 @@ final readonly class CreateFollow implements CreateFollowInterface
     public function execute(CreateFollowInputPort $input): void
     {
         $this->transactionManager->transaction(function () use ($input): void {
-            if (! $this->accountRepository->exists($input->followedAccountIdentifier())) {
+            if ($this->accountRepository->find($input->followedAccountIdentifier()) === null) {
                 throw new FollowedAccountNotFoundException;
             }
 

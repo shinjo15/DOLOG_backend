@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Actions\Account;
 
-use App\Http\Requests\Follow\CreateFollowRequest;
+use App\Http\Requests\Account\CreateFollowRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use RuntimeException;

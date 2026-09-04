@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 use RuntimeException;
 use Src\Account\Application\UseCase\CreateFollow\CreateFollowInterface;
 use Src\Account\Domain\Exception\DuplicateFollowException;
-use Src\Account\Domain\Exception\FollowedAccountNotFoundException;
+use Src\Account\Domain\Exception\AccountNotFoundException;
 use Src\Account\Domain\Exception\SelfFollowException;
 use Src\Shared\Application\Service\AuthServiceInterface;
 
@@ -29,7 +29,7 @@ final readonly class CreateFollowAction
             return new Response('', 204);
         } catch (RuntimeException) {
             return new Response('', 401);
-        } catch (FollowedAccountNotFoundException $exception) {
+        } catch (AccountNotFoundException $exception) {
             return new JsonResponse(['message' => $exception->getMessage()], 404);
         } catch (SelfFollowException $exception) {
             return new JsonResponse(['message' => $exception->getMessage()], 422);

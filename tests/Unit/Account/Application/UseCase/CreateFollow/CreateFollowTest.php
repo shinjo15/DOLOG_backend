@@ -10,7 +10,7 @@ use Src\Account\Application\UseCase\CreateFollow\CreateFollowInput;
 use Src\Account\Domain\Entity\Account;
 use Src\Account\Domain\Entity\Follow;
 use Src\Account\Domain\Exception\DuplicateFollowException;
-use Src\Account\Domain\Exception\FollowedAccountNotFoundException;
+use Src\Account\Domain\Exception\AccountNotFoundException;
 use Src\Account\Domain\Exception\SelfFollowException;
 use Src\Account\Domain\Factory\FollowFactoryInterface;
 use Src\Account\Domain\Repository\AccountRepositoryInterface;
@@ -36,7 +36,7 @@ final class CreateFollowTest extends TestCase
 
     public function test_rejects_a_missing_followed_account(): void
     {
-        $this->expectException(FollowedAccountNotFoundException::class);
+        $this->expectException(AccountNotFoundException::class);
 
         $this->useCase(false, new InMemoryFollowRepository)->execute($this->input());
     }

@@ -8,6 +8,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
 use Src\Account\Domain\ValueObject\AccountBio;
+use Src\Account\Domain\ValueObject\AccountHeader;
+use Src\Account\Domain\ValueObject\AccountIcon;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
 use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
@@ -34,30 +36,42 @@ final class CreateAccountRequest extends FormRequest
             'social_links.*.social_url' => ['required', 'url'],
             'favorite_tag_identifiers' => ['required', 'array'],
             'favorite_tag_identifiers.*' => ['required', 'uuid'],
+            'icon_image' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:5120'],
+            'header_image' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:10240'],
         ];
     }
 
-    public function toInput(): CreateAccountInput
+    public function toInput(?AccountIcon $icon, ?AccountHeader $header): CreateAccountInput
     {
-        $v = $this->validated();
+        $validated = $this->validated();
 
         return new CreateAccountInput(
-            new AccountName($v['account_name']),
-            isset($v['account_bio']) ? new AccountBio($v['account_bio']) : null,
-            new EmailAddress($v['email_address']),
+            new AccountName($validated['account_name']),
+            isset($validated['account_bio']) ? new AccountBio($validated['account_bio']) : null,
+            new EmailAddress($validated['email_address']),
             array_map(
                 static fn (array $link): SocialLink => new SocialLink(
                     SocialType::from($link['social_type']),
                     new SocialUrl($link['social_url']),
                 ),
-                $v['social_links'],
+                $validated['social_links'],
             ),
             new FavoriteTagIdentifiers(
                 array_map(
-                    static fn (string $id): TagIdentifier => new TagIdentifier($id),
-                    $v['favorite_tag_identifiers'],
-                ),
+                    static fn (string $identifier): TagIdentifier => new TagIdentifier($identifier), $validated['favorite_tag_identifiers']),
             ),
+            $icon,
+            $header,
         );
+    }
+
+    public function iconImageContents(): ?string
+    {
+        return $this->file('icon_image')?->getContent();
+    }
+
+    public function headerImageContents(): ?string
+    {
+        return $this->file('header_image')?->getContent();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Unit\Account\Application\UseCase\CreateAccount;
 
 use PHPUnit\Framework\TestCase;
 use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
+use Src\Account\Application\Service\StorageServiceInterface;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
 use Src\Account\Domain\Entity\Account;
@@ -13,6 +14,8 @@ use Src\Account\Domain\Exception\DuplicateEmailAddressException;
 use Src\Account\Domain\Factory\AccountFactoryInterface;
 use Src\Account\Domain\Repository\AccountRepositoryInterface;
 use Src\Account\Domain\ValueObject\AccountBio;
+use Src\Account\Domain\ValueObject\AccountHeader;
+use Src\Account\Domain\ValueObject\AccountIcon;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
 use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
@@ -39,6 +42,7 @@ final class CreateAccountTest extends TestCase
             accountFactory: new FakeAccountFactory($account),
             accountRegistrationMailService: $mailService,
             transactionManager: new ImmediateTransactionManager,
+            storageService: new FakeStorageService,
         ))->execute(new CreateAccountInput(
             accountName: new AccountName('朝活ユーザー'),
             accountBio: new AccountBio('朝の時間を大切にしています。'),
@@ -67,6 +71,7 @@ final class CreateAccountTest extends TestCase
             accountFactory: new FakeAccountFactory($accountRepository->existingAccount),
             accountRegistrationMailService: $mailService,
             transactionManager: new ImmediateTransactionManager,
+            storageService: new FakeStorageService,
         ))->execute(new CreateAccountInput(
             new AccountName('朝活ユーザー'), null, new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]),
         ));
@@ -113,6 +118,14 @@ final class FakeAccountRegistrationMailService implements AccountRegistrationMai
         $this->sentTo = [$emailAddress->value(), $accountName->value()];
     }
 }
+
+final class FakeStorageService implements StorageServiceInterface
+{
+    public function uploadIcon(AccountIdentifier $accountIdentifier, AccountIcon $icon): void {}
+
+    public function uploadHeader(AccountIdentifier $accountIdentifier, AccountHeader $header): void {}
+}
+
 final class ImmediateTransactionManager implements TransactionManagerInterface
 {
     public function transaction(callable $callback): mixed

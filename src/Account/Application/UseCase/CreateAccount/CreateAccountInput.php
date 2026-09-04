@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Src\Account\Application\UseCase\CreateAccount;
 
 use Src\Account\Domain\ValueObject\AccountBio;
+use Src\Account\Domain\ValueObject\AccountHeader;
+use Src\Account\Domain\ValueObject\AccountIcon;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
 use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
@@ -19,6 +21,8 @@ final readonly class CreateAccountInput implements CreateAccountInputPort
         private EmailAddress $emailAddress,
         private array $socialLinks,
         private FavoriteTagIdentifiers $favoriteTagIdentifiers,
+        private ?AccountIcon $icon = null,
+        private ?AccountHeader $header = null,
     ) {}
 
     public function accountName(): AccountName
@@ -44,5 +48,15 @@ final readonly class CreateAccountInput implements CreateAccountInputPort
     public function favoriteTagIdentifiers(): FavoriteTagIdentifiers
     {
         return $this->favoriteTagIdentifiers;
+    }
+
+    public function icon(): ?AccountIcon
+    {
+        return $this->icon;
+    }
+
+    public function header(): ?AccountHeader
+    {
+        return $this->header;
     }
 }

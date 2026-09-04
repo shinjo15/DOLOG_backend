@@ -8,10 +8,10 @@ use App\Http\Requests\Follow\CreateFollowRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use RuntimeException;
-use Src\Follow\Application\UseCase\CreateFollow\CreateFollowInterface;
-use Src\Follow\Domain\Exception\DuplicateFollowException;
-use Src\Follow\Domain\Exception\FollowedAccountNotFoundException;
-use Src\Follow\Domain\Exception\SelfFollowException;
+use Src\Account\Follow\Application\UseCase\CreateFollow\CreateFollowInterface;
+use Src\Account\Follow\Domain\Exception\DuplicateFollowException;
+use Src\Account\Follow\Domain\Exception\FollowedAccountNotFoundException;
+use Src\Account\Follow\Domain\Exception\SelfFollowException;
 use Src\Shared\Application\Service\AuthServiceInterface;
 
 final readonly class CreateFollowAction

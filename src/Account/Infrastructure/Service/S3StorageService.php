@@ -11,7 +11,7 @@ use Src\Account\Domain\ValueObject\AccountHeader;
 use Src\Account\Domain\ValueObject\AccountIcon;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
-final class LaravelStorageService implements StorageServiceInterface
+final class S3StorageService implements StorageServiceInterface
 {
     public function uploadIcon(
         AccountIdentifier $accountIdentifier,

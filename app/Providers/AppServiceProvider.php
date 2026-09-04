@@ -29,7 +29,8 @@ use Src\Account\Infrastructure\Repository\BlockRepository;
 use Src\Account\Infrastructure\Repository\FollowRepository;
 use Src\Account\Infrastructure\Service\AccountImageConverterService;
 use Src\Account\Infrastructure\Service\LaravelAccountRegistrationMailService;
-use Src\Account\Infrastructure\Service\LaravelStorageService;
+use Src\Account\Infrastructure\Service\LocalStorageService;
+use Src\Account\Infrastructure\Service\S3StorageService;
 use Src\Authentication\Application\Service\LoginPasscodeGeneratorServiceInterface;
 use Src\Authentication\Application\Service\LoginPasscodeHashServiceInterface;
 use Src\Authentication\Application\Service\LoginPasscodeMailServiceInterface;
@@ -117,7 +118,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AccountRepositoryInterface::class, AccountRepository::class);
         $this->app->bind(AccountRegistrationMailServiceInterface::class, LaravelAccountRegistrationMailService::class);
         $this->app->bind(AccountImageConverterServiceInterface::class, AccountImageConverterService::class);
-        $this->app->bind(StorageServiceInterface::class, LaravelStorageService::class);
+        $this->app->bind(
+            StorageServiceInterface::class,
+            config('account.images.storage') === 's3'
+                ? S3StorageService::class
+                : LocalStorageService::class,
+        );
         $this->app->bind(CreateAccountInterface::class, CreateAccount::class);
         $this->app->bind(ChangeAccountStatusInterface::class, ChangeAccountStatus::class);
         $this->app->bind(TagFactoryInterface::class, TagFactory::class);

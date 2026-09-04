@@ -47,6 +47,13 @@ return [
             'report' => false,
         ],
 
+        'account_images' => [
+            'driver' => 'local',
+            'root' => base_path('images'),
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

@@ -58,7 +58,7 @@ final class CreateAccountActionTest extends TestCase
     public function test_uploads_optional_account_images_as_webp(): void
     {
         Mail::fake();
-        Storage::fake('s3');
+        Storage::fake('account_images');
         $this->insertFavoriteTag();
         $payload = $this->validPayload();
         $payload['icon_image'] = UploadedFile::fake()->image('icon.png', 128, 128);
@@ -70,8 +70,8 @@ final class CreateAccountActionTest extends TestCase
             ->where('email_address', 'user@example.com')
             ->value('account_identifier');
 
-        Storage::disk('s3')->assertExists("accounts/{$accountIdentifier}/icon/icon.webp");
-        Storage::disk('s3')->assertExists("accounts/{$accountIdentifier}/header/header.webp");
+        Storage::disk('account_images')->assertExists("accounts/{$accountIdentifier}/icon/icon.webp");
+        Storage::disk('account_images')->assertExists("accounts/{$accountIdentifier}/header/header.webp");
     }
 
     public function test_returns_a_japanese_validation_error_for_a_duplicate_email_address(): void

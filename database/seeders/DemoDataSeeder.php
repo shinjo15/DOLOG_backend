@@ -19,6 +19,7 @@ final class DemoDataSeeder extends Seeder
             $this->seedRoutines($timestamp);
             $this->seedRoutineActions($timestamp);
             $this->seedRoutineTags($timestamp);
+            $this->seedRoutineExecutions($timestamp);
             $this->seedPosts($timestamp);
             $this->seedFollows($timestamp);
             $this->seedLikes($timestamp);
@@ -88,13 +89,35 @@ final class DemoDataSeeder extends Seeder
     private function seedPosts(mixed $timestamp): void
     {
         DB::table('posts')->upsert([
-            $this->post('60000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', 'routine', 2, 0, $timestamp),
-            $this->post('60000000-0000-4000-8000-000000000002', '30000000-0000-4000-8000-000000000001', 'action', 0, 1, $timestamp),
-            $this->post('60000000-0000-4000-8000-000000000003', '30000000-0000-4000-8000-000000000002', 'routine', 1, 0, $timestamp),
-            $this->post('60000000-0000-4000-8000-000000000004', '30000000-0000-4000-8000-000000000002', 'action', 0, 0, $timestamp),
-            $this->post('60000000-0000-4000-8000-000000000005', '30000000-0000-4000-8000-000000000003', 'routine', 0, 0, $timestamp),
-            $this->post('60000000-0000-4000-8000-000000000006', '30000000-0000-4000-8000-000000000004', 'routine', 0, 0, $timestamp),
-        ], ['post_identifier'], ['routine_identifier', 'post_category', 'post_like_count', 'post_support_count', 'available', 'updated_at']);
+            $this->post('60000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', null, 'routine', 2, 0, $timestamp),
+            $this->post('60000000-0000-4000-8000-000000000002', '30000000-0000-4000-8000-000000000001', '50000000-0000-4000-8000-000000000001', 'action', 0, 1, $timestamp),
+            $this->post('60000000-0000-4000-8000-000000000003', '30000000-0000-4000-8000-000000000002', null, 'routine', 1, 0, $timestamp),
+            $this->post('60000000-0000-4000-8000-000000000004', '30000000-0000-4000-8000-000000000002', '50000000-0000-4000-8000-000000000002', 'action', 0, 0, $timestamp),
+            $this->post('60000000-0000-4000-8000-000000000005', '30000000-0000-4000-8000-000000000003', null, 'routine', 0, 0, $timestamp),
+            $this->post('60000000-0000-4000-8000-000000000006', '30000000-0000-4000-8000-000000000004', null, 'routine', 0, 0, $timestamp),
+        ], ['post_identifier'], ['routine_identifier', 'routine_execution_identifier', 'post_category', 'post_like_count', 'post_support_count', 'available', 'updated_at']);
+    }
+
+    private function seedRoutineExecutions(mixed $timestamp): void
+    {
+        DB::table('routine_executions')->upsert([
+            [
+                'routine_execution_identifier' => '50000000-0000-4000-8000-000000000001',
+                'executor_account_identifier' => '10000000-0000-4000-8000-000000000002',
+                'routine_identifier' => '30000000-0000-4000-8000-000000000001',
+                'executed_at' => $timestamp,
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ],
+            [
+                'routine_execution_identifier' => '50000000-0000-4000-8000-000000000002',
+                'executor_account_identifier' => '10000000-0000-4000-8000-000000000003',
+                'routine_identifier' => '30000000-0000-4000-8000-000000000002',
+                'executed_at' => $timestamp,
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ],
+        ], ['routine_execution_identifier'], ['executor_account_identifier', 'routine_identifier', 'executed_at', 'updated_at']);
     }
 
     private function seedFollows(mixed $timestamp): void
@@ -205,6 +228,7 @@ final class DemoDataSeeder extends Seeder
     private function post(
         string $identifier,
         string $routineIdentifier,
+        ?string $routineExecutionIdentifier,
         string $category,
         int $likeCount,
         int $supportCount,
@@ -213,6 +237,7 @@ final class DemoDataSeeder extends Seeder
         return [
             'post_identifier' => $identifier,
             'routine_identifier' => $routineIdentifier,
+            'routine_execution_identifier' => $routineExecutionIdentifier,
             'post_category' => $category,
             'post_like_count' => $likeCount,
             'post_support_count' => $supportCount,

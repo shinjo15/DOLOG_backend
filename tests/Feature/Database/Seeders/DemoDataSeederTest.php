@@ -26,6 +26,7 @@ final class DemoDataSeederTest extends TestCase
         $this->assertSame(4, DB::table('tags')->count());
         $this->assertSame(4, DB::table('routines')->count());
         $this->assertSame(8, DB::table('routine_actions')->count());
+        $this->assertSame(2, DB::table('routine_executions')->count());
         $this->assertSame(6, DB::table('posts')->count());
         $this->assertSame(3, DB::table('likes')->count());
 
@@ -53,6 +54,7 @@ final class DemoDataSeederTest extends TestCase
             'post_identifier' => '60000000-0000-4000-8000-000000000002',
             'post_category' => 'action',
             'post_support_count' => 1,
+            'routine_execution_identifier' => '50000000-0000-4000-8000-000000000001',
         ]);
     }
 }

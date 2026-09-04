@@ -9,12 +9,13 @@ use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
 use Src\Account\Application\Service\StorageServiceInterface;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
-use Src\Account\Application\ValueObject\AccountImage;
 use Src\Account\Domain\Entity\Account;
 use Src\Account\Domain\Exception\DuplicateEmailAddressException;
 use Src\Account\Domain\Factory\AccountFactoryInterface;
 use Src\Account\Domain\Repository\AccountRepositoryInterface;
 use Src\Account\Domain\ValueObject\AccountBio;
+use Src\Account\Domain\ValueObject\AccountHeader;
+use Src\Account\Domain\ValueObject\AccountIcon;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
 use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
@@ -120,9 +121,9 @@ final class FakeAccountRegistrationMailService implements AccountRegistrationMai
 
 final class FakeStorageService implements StorageServiceInterface
 {
-    public function uploadIcon(AccountIdentifier $accountIdentifier, AccountImage $image): void {}
+    public function uploadIcon(AccountIdentifier $accountIdentifier, AccountIcon $icon): void {}
 
-    public function uploadHeader(AccountIdentifier $accountIdentifier, AccountImage $image): void {}
+    public function uploadHeader(AccountIdentifier $accountIdentifier, AccountHeader $header): void {}
 }
 
 final class ImmediateTransactionManager implements TransactionManagerInterface

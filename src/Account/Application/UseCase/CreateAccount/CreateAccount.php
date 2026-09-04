@@ -33,17 +33,17 @@ final readonly class CreateAccount implements CreateAccountInterface
         $this->transactionManager->transaction(function () use ($account, $input): void {
             $this->accountRepository->save($account);
 
-            if ($input->iconImage() !== null) {
+            if ($input->icon() !== null) {
                 $this->storageService->uploadIcon(
                     $account->accountIdentifier(),
-                    $input->iconImage(),
+                    $input->icon(),
                 );
             }
 
-            if ($input->headerImage() !== null) {
+            if ($input->header() !== null) {
                 $this->storageService->uploadHeader(
                     $account->accountIdentifier(),
-                    $input->headerImage(),
+                    $input->header(),
                 );
             }
         });

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Src\Account\Application\UseCase\CreateAccount;
 
-use Src\Account\Application\ValueObject\AccountImage;
 use Src\Account\Domain\ValueObject\AccountBio;
+use Src\Account\Domain\ValueObject\AccountHeader;
+use Src\Account\Domain\ValueObject\AccountIcon;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
 use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
@@ -24,7 +25,7 @@ interface CreateAccountInputPort
 
     public function favoriteTagIdentifiers(): FavoriteTagIdentifiers;
 
-    public function iconImage(): ?AccountImage;
+    public function icon(): ?AccountIcon;
 
-    public function headerImage(): ?AccountImage;
+    public function header(): ?AccountHeader;
 }

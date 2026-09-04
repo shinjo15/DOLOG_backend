@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Support\LaravelUuidServices;
 use Illuminate\Support\ServiceProvider;
+use Src\Account\Application\Service\AccountImageConverterServiceInterface;
 use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
 use Src\Account\Application\Service\StorageServiceInterface;
 use Src\Account\Application\UseCase\ChangeAccountStatus\ChangeAccountStatus;
@@ -26,6 +27,7 @@ use Src\Account\Infrastructure\Factory\FollowFactory;
 use Src\Account\Infrastructure\Repository\AccountRepository;
 use Src\Account\Infrastructure\Repository\BlockRepository;
 use Src\Account\Infrastructure\Repository\FollowRepository;
+use Src\Account\Infrastructure\Service\AccountImageConverterService;
 use Src\Account\Infrastructure\Service\LaravelAccountRegistrationMailService;
 use Src\Account\Infrastructure\Service\LaravelStorageService;
 use Src\Authentication\Application\Service\LoginPasscodeGeneratorServiceInterface;
@@ -114,6 +116,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AccountFactoryInterface::class, AccountFactory::class);
         $this->app->bind(AccountRepositoryInterface::class, AccountRepository::class);
         $this->app->bind(AccountRegistrationMailServiceInterface::class, LaravelAccountRegistrationMailService::class);
+        $this->app->bind(AccountImageConverterServiceInterface::class, AccountImageConverterService::class);
         $this->app->bind(StorageServiceInterface::class, LaravelStorageService::class);
         $this->app->bind(CreateAccountInterface::class, CreateAccount::class);
         $this->app->bind(ChangeAccountStatusInterface::class, ChangeAccountStatus::class);

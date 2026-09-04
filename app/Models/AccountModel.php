@@ -17,11 +17,11 @@ final class AccountModel extends Model
 
     protected $keyType = 'string';
 
-    protected $fillable = ['account_identifier', 'account_name', 'account_bio', 'email_address', 'available'];
+    protected $fillable = ['account_identifier', 'account_name', 'account_bio', 'email_address', 'available', 'status', 'ban_until'];
 
     protected function casts(): array
     {
-        return ['available' => 'boolean'];
+        return ['available' => 'boolean', 'ban_until' => 'immutable_datetime'];
     }
 
     public function socialLinks(): HasMany

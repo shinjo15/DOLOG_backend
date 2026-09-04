@@ -94,6 +94,11 @@ final class InMemoryAccounts implements AccountRepositoryInterface
 {
     public function __construct(private ?Account $account) {}
 
+    public function find(AccountIdentifier $accountIdentifier): ?Account
+    {
+        return null;
+    }
+
     public function findByEmailAddress(EmailAddress $emailAddress): ?Account
     {
         return $this->account;

@@ -6,6 +6,7 @@ namespace App\Http\Requests\Account;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Src\Account\Application\Service\AccountImage;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
@@ -34,6 +35,20 @@ final class CreateAccountRequest extends FormRequest
             'social_links.*.social_url' => ['required', 'url'],
             'favorite_tag_identifiers' => ['required', 'array'],
             'favorite_tag_identifiers.*' => ['required', 'uuid'],
+            'icon_image' => [
+                'nullable',
+                'file',
+                'mimes:png,jpg,jpeg,webp',
+                'max:5120',
+                'dimensions:min_width=128,min_height=128,max_width=2048,max_height=2048,ratio=1/1',
+            ],
+            'header_image' => [
+                'nullable',
+                'file',
+                'mimes:png,jpg,jpeg,webp',
+                'max:10240',
+                'dimensions:min_width=640,min_height=320,max_width=2560,max_height=1440',
+            ],
         ];
     }
 
@@ -58,6 +73,12 @@ final class CreateAccountRequest extends FormRequest
                     $v['favorite_tag_identifiers'],
                 ),
             ),
+            isset($v['icon_image'])
+                ? new AccountImage($v['icon_image']->getContent())
+                : null,
+            isset($v['header_image'])
+                ? new AccountImage($v['header_image']->getContent())
+                : null,
         );
     }
 }

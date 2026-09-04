@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Account\Application\UseCase\CreateAccount;
 
 use PHPUnit\Framework\TestCase;
+use Src\Account\Application\Service\AccountImage;
 use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
+use Src\Account\Application\Service\StorageServiceInterface;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
 use Src\Account\Domain\Entity\Account;
@@ -39,6 +41,7 @@ final class CreateAccountTest extends TestCase
             accountFactory: new FakeAccountFactory($account),
             accountRegistrationMailService: $mailService,
             transactionManager: new ImmediateTransactionManager,
+            storageService: new FakeStorageService,
         ))->execute(new CreateAccountInput(
             accountName: new AccountName('朝活ユーザー'),
             accountBio: new AccountBio('朝の時間を大切にしています。'),
@@ -67,6 +70,7 @@ final class CreateAccountTest extends TestCase
             accountFactory: new FakeAccountFactory($accountRepository->existingAccount),
             accountRegistrationMailService: $mailService,
             transactionManager: new ImmediateTransactionManager,
+            storageService: new FakeStorageService,
         ))->execute(new CreateAccountInput(
             new AccountName('朝活ユーザー'), null, new EmailAddress('user@example.com'), [], new FavoriteTagIdentifiers([]),
         ));
@@ -113,6 +117,14 @@ final class FakeAccountRegistrationMailService implements AccountRegistrationMai
         $this->sentTo = [$emailAddress->value(), $accountName->value()];
     }
 }
+
+final class FakeStorageService implements StorageServiceInterface
+{
+    public function uploadIcon(AccountIdentifier $accountIdentifier, AccountImage $image): void {}
+
+    public function uploadHeader(AccountIdentifier $accountIdentifier, AccountImage $image): void {}
+}
+
 final class ImmediateTransactionManager implements TransactionManagerInterface
 {
     public function transaction(callable $callback): mixed

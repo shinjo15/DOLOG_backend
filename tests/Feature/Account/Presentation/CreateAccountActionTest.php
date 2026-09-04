@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tests\Feature\Account\Presentation;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Src\Account\Infrastructure\Mail\AccountRegistrationMail;
 use Tests\TestCase;
 
@@ -51,6 +53,25 @@ final class CreateAccountActionTest extends TestCase
         $this->postJson('/api/accounts', $payload)->assertCreated();
 
         self::assertFalse(Schema::hasTable('account_credentials'));
+    }
+
+    public function test_uploads_optional_account_images_as_webp(): void
+    {
+        Mail::fake();
+        Storage::fake('s3');
+        $this->insertFavoriteTag();
+        $payload = $this->validPayload();
+        $payload['icon_image'] = UploadedFile::fake()->image('icon.png', 128, 128);
+        $payload['header_image'] = UploadedFile::fake()->image('header.png', 640, 320);
+
+        $this->post('/api/accounts', $payload)->assertCreated();
+
+        $accountIdentifier = $this->app['db']->table('accounts')
+            ->where('email_address', 'user@example.com')
+            ->value('account_identifier');
+
+        Storage::disk('s3')->assertExists("accounts/{$accountIdentifier}/icon/icon.webp");
+        Storage::disk('s3')->assertExists("accounts/{$accountIdentifier}/header/header.webp");
     }
 
     public function test_returns_a_japanese_validation_error_for_a_duplicate_email_address(): void

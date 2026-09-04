@@ -11,8 +11,8 @@ services:
       - MAIL_MAILER=smtp
       - MAIL_HOST=mailpit
       - MAIL_PORT=1025
-      - MAIL_FROM_ADDRESS=no-reply@dolog.local
-      - MAIL_FROM_NAME=${APP_NAME}
+      - MAIL_FROM_ADDRESS=no-reply@hibilio.local
+      - MAIL_FROM_NAME=HIBILIO
       - REDIS_CLIENT=phpredis
       - REDIS_HOST=redis
       - REDIS_PORT=6379

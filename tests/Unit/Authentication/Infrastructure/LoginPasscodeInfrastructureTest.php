@@ -36,7 +36,14 @@ final class LoginPasscodeInfrastructureTest extends TestCase
     {
         Mail::fake();
         (new LoginPasscodeMailService)->send(new EmailAddress('user@example.com'), new LoginPasscode('123456'));
-        Mail::assertSent(LoginPasscodeMail::class, fn (LoginPasscodeMail $mail): bool => $mail->hasTo('user@example.com') && str_contains($mail->render(), '123456'));
+        Mail::assertSent(LoginPasscodeMail::class, function (LoginPasscodeMail $mail): bool {
+            self::assertTrue($mail->hasTo('user@example.com'));
+            self::assertStringContainsString('123456', $mail->render());
+            self::assertStringContainsString('HIBILIO', $mail->render());
+            self::assertSame('HIBILIO ログインパスコード', $mail->subject);
+
+            return true;
+        });
     }
 
     public function test_session_service_stores_and_clears_only_the_challenge_identifier(): void

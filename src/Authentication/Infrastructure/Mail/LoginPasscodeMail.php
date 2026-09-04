@@ -16,6 +16,6 @@ final class LoginPasscodeMail extends Mailable
 
     public function build(): self
     {
-        return $this->subject('DOLOG ログインパスコード')->text('mail.login-passcode-text');
+        return $this->subject('HIBILIO ログインパスコード')->text('mail.login-passcode-text');
     }
 }

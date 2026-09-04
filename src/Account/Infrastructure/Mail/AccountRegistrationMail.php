@@ -16,6 +16,6 @@ final class AccountRegistrationMail extends Mailable
 
     public function build(): self
     {
-        return $this->subject('DOLOG アカウント登録完了')->text('mail.account-registration-completed-text');
+        return $this->subject('HIBILIO アカウント登録完了')->text('mail.account-registration-completed-text');
     }
 }

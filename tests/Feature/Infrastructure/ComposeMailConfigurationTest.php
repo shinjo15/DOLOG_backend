@@ -16,8 +16,8 @@ final class ComposeMailConfigurationTest extends TestCase
         self::assertStringContainsString('MAIL_MAILER=smtp', $compose);
         self::assertStringContainsString('MAIL_HOST=mailpit', $compose);
         self::assertStringContainsString('MAIL_PORT=1025', $compose);
-        self::assertStringContainsString('MAIL_FROM_ADDRESS=no-reply@dolog.local', $compose);
-        self::assertStringContainsString('MAIL_FROM_NAME=${APP_NAME}', $compose);
+        self::assertStringContainsString('MAIL_FROM_ADDRESS=no-reply@hibilio.local', $compose);
+        self::assertStringContainsString('MAIL_FROM_NAME=HIBILIO', $compose);
         self::assertStringContainsString('8026:8025', $compose);
     }
 }

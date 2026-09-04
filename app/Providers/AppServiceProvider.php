@@ -9,10 +9,22 @@ use Src\Account\Application\UseCase\ChangeAccountStatus\ChangeAccountStatus;
 use Src\Account\Application\UseCase\ChangeAccountStatus\ChangeAccountStatusInterface;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInterface;
+use Src\Account\Application\UseCase\CreateBlock\CreateBlock;
+use Src\Account\Application\UseCase\CreateBlock\CreateBlockInterface;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollow;
+use Src\Account\Application\UseCase\CreateFollow\CreateFollowInterface;
 use Src\Account\Domain\Factory\AccountFactoryInterface;
+use Src\Account\Domain\Factory\BlockFactoryInterface;
+use Src\Account\Domain\Factory\FollowFactoryInterface;
 use Src\Account\Domain\Repository\AccountRepositoryInterface;
+use Src\Account\Domain\Repository\BlockRepositoryInterface;
+use Src\Account\Domain\Repository\FollowRepositoryInterface;
 use Src\Account\Infrastructure\Factory\AccountFactory;
+use Src\Account\Infrastructure\Factory\BlockFactory;
+use Src\Account\Infrastructure\Factory\FollowFactory;
 use Src\Account\Infrastructure\Repository\AccountRepository;
+use Src\Account\Infrastructure\Repository\BlockRepository;
+use Src\Account\Infrastructure\Repository\FollowRepository;
 use Src\Account\Infrastructure\Service\LaravelAccountRegistrationMailService;
 use Src\Authentication\Application\Service\LoginPasscodeGeneratorServiceInterface;
 use Src\Authentication\Application\Service\LoginPasscodeHashServiceInterface;
@@ -30,14 +42,6 @@ use Src\Authentication\Infrastructure\Service\LoginPasscodeGeneratorService;
 use Src\Authentication\Infrastructure\Service\LoginPasscodeHashService;
 use Src\Authentication\Infrastructure\Service\LoginPasscodeMailService;
 use Src\Authentication\Infrastructure\Service\RedisLoginPasscodeStateService;
-use Src\Account\Application\UseCase\CreateFollow\CreateFollow;
-use Src\Account\Application\UseCase\CreateFollow\CreateFollowInterface;
-use Src\Account\Domain\Factory\FollowFactoryInterface;
-
-use Src\Account\Domain\Repository\FollowRepositoryInterface;
-use Src\Account\Infrastructure\Factory\FollowFactory;
-
-use Src\Account\Infrastructure\Repository\FollowRepository;
 use Src\Like\Application\UseCase\CreateLike\CreateLike;
 use Src\Like\Application\UseCase\CreateLike\CreateLikeInterface;
 use Src\Like\Application\Usecase\Query\GetMyLikes\GetMyLikesInterface;
@@ -122,6 +126,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FollowRepositoryInterface::class, FollowRepository::class);
 
         $this->app->bind(CreateFollowInterface::class, CreateFollow::class);
+        $this->app->bind(BlockFactoryInterface::class, BlockFactory::class);
+        $this->app->bind(BlockRepositoryInterface::class, BlockRepository::class);
+        $this->app->bind(CreateBlockInterface::class, CreateBlock::class);
         $this->app->bind(SupportFactoryInterface::class, SupportFactory::class);
         $this->app->bind(SupportRepositoryInterface::class, SupportRepository::class);
         $this->app->bind(CreateSupportInterface::class, CreateSupport::class);

@@ -61,7 +61,7 @@ final class CreateFollowActionTest extends TestCase
 
         $this->authenticatedRequest()
             ->assertNotFound()
-            ->assertExactJson(['message' => 'フォロー対象のアカウントが見つかりません。']);
+            ->assertExactJson(['message' => 'アカウントが見つかりません。']);
     }
 
     public function test_validates_the_follow_request(): void

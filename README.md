@@ -1,4 +1,4 @@
-# DOLOG Backend
+# HIBILIO Backend
 
 Laravel を Docker Compose で動かすバックエンドです。
 

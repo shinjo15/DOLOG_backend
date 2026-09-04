@@ -22,6 +22,8 @@ final class LaravelAccountRegistrationMailServiceTest extends TestCase
         Mail::assertSent(AccountRegistrationMail::class, function (AccountRegistrationMail $mail): bool {
             self::assertSame('user@example.com', $mail->hasTo('user@example.com') ? 'user@example.com' : null);
             self::assertStringContainsString('朝活ユーザー', $mail->render());
+            self::assertStringContainsString('HIBILIO', $mail->render());
+            self::assertSame('HIBILIO アカウント登録完了', $mail->subject);
 
             return true;
         });

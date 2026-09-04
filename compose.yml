@@ -12,7 +12,7 @@ services:
       - MAIL_HOST=mailpit
       - MAIL_PORT=1025
       - MAIL_FROM_ADDRESS=no-reply@hibilio.local
-      - MAIL_FROM_NAME=HIBILIO
+      - MAIL_FROM_NAME=${APP_NAME}
       - REDIS_CLIENT=phpredis
       - REDIS_HOST=redis
       - REDIS_PORT=6379

@@ -6,7 +6,7 @@ namespace Src\Follow\Domain\Repository;
 
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
-interface FollowedAccountRepositoryInterface
+interface AccountRepositoryInterface
 {
-    public function exists(AccountIdentifier $followedAccountIdentifier): bool;
+    public function exists(AccountIdentifier $accountIdentifier): bool;
 }

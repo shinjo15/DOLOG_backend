@@ -12,7 +12,7 @@ use Src\Follow\Domain\Exception\DuplicateFollowException;
 use Src\Follow\Domain\Exception\FollowedAccountNotFoundException;
 use Src\Follow\Domain\Exception\SelfFollowException;
 use Src\Follow\Domain\Factory\FollowFactoryInterface;
-use Src\Follow\Domain\Repository\FollowedAccountRepositoryInterface;
+use Src\Follow\Domain\Repository\AccountRepositoryInterface;
 use Src\Follow\Domain\Repository\FollowRepositoryInterface;
 use Src\Shared\Application\Transaction\TransactionManagerInterface;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
@@ -76,7 +76,7 @@ final class CreateFollowTest extends TestCase
     {
         return new CreateFollow(
             new ImmediateTransactionManager,
-            new InMemoryFollowedAccountRepository($followedAccountExists),
+            new InMemoryAccountRepository($followedAccountExists),
             $followRepository,
             new TestFollowFactory,
         );
@@ -107,7 +107,7 @@ final class ImmediateTransactionManager implements TransactionManagerInterface
     }
 }
 
-final class InMemoryFollowedAccountRepository implements FollowedAccountRepositoryInterface
+final class InMemoryAccountRepository implements AccountRepositoryInterface
 {
     public function __construct(private bool $exists) {}
 

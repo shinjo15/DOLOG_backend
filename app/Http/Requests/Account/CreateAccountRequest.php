@@ -6,8 +6,8 @@ namespace App\Http\Requests\Account;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Src\Account\Application\UseCase\CreateAccount\AccountImageFile;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
+use Src\Account\Application\ValueObject\AccountImage;
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
@@ -74,10 +74,10 @@ final class CreateAccountRequest extends FormRequest
                 ),
             ),
             isset($v['icon_image'])
-                ? new AccountImageFile($v['icon_image']->getContent())
+                ? new AccountImage($v['icon_image']->getContent())
                 : null,
             isset($v['header_image'])
-                ? new AccountImageFile($v['header_image']->getContent())
+                ? new AccountImage($v['header_image']->getContent())
                 : null,
         );
     }

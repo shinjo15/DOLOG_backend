@@ -7,14 +7,14 @@ namespace Src\Account\Infrastructure\Service;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Src\Account\Application\Service\StorageServiceInterface;
-use Src\Account\Application\UseCase\CreateAccount\AccountImageFile;
+use Src\Account\Application\ValueObject\AccountImage;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 final class LaravelStorageService implements StorageServiceInterface
 {
     public function uploadIcon(
         AccountIdentifier $accountIdentifier,
-        AccountImageFile $image,
+        AccountImage $image,
     ): void {
         $this->upload(
             $accountIdentifier,
@@ -25,7 +25,7 @@ final class LaravelStorageService implements StorageServiceInterface
 
     public function uploadHeader(
         AccountIdentifier $accountIdentifier,
-        AccountImageFile $image,
+        AccountImage $image,
     ): void {
         $this->upload(
             $accountIdentifier,
@@ -37,7 +37,7 @@ final class LaravelStorageService implements StorageServiceInterface
     private function upload(
         AccountIdentifier $accountIdentifier,
         string $filename,
-        AccountImageFile $image,
+        AccountImage $image,
     ): void {
         $resource = imagecreatefromstring($image->contents());
 

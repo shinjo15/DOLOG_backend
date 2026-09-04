@@ -7,9 +7,9 @@ namespace Tests\Unit\Account\Application\UseCase\CreateAccount;
 use PHPUnit\Framework\TestCase;
 use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
 use Src\Account\Application\Service\StorageServiceInterface;
-use Src\Account\Application\UseCase\CreateAccount\AccountImageFile;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInput;
+use Src\Account\Application\ValueObject\AccountImage;
 use Src\Account\Domain\Entity\Account;
 use Src\Account\Domain\Exception\DuplicateEmailAddressException;
 use Src\Account\Domain\Factory\AccountFactoryInterface;
@@ -120,9 +120,9 @@ final class FakeAccountRegistrationMailService implements AccountRegistrationMai
 
 final class FakeStorageService implements StorageServiceInterface
 {
-    public function uploadIcon(AccountIdentifier $accountIdentifier, AccountImageFile $image): void {}
+    public function uploadIcon(AccountIdentifier $accountIdentifier, AccountImage $image): void {}
 
-    public function uploadHeader(AccountIdentifier $accountIdentifier, AccountImageFile $image): void {}
+    public function uploadHeader(AccountIdentifier $accountIdentifier, AccountImage $image): void {}
 }
 
 final class ImmediateTransactionManager implements TransactionManagerInterface

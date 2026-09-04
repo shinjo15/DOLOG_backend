@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Src\Account\Application\UseCase\CreateAccount;
+namespace Src\Account\Application\ValueObject;
 
-final readonly class AccountImageFile
+final readonly class AccountImage
 {
     public function __construct(
         private string $contents,

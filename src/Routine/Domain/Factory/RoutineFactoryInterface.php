@@ -17,6 +17,7 @@ interface RoutineFactoryInterface
 {
     public function create(
         RoutineIdentifier $routineIdentifier,
+        ?RoutineIdentifier $parentRoutineIdentifier,
         RoutineName $routineName,
         RoutineActionIdentifiers $routineActionIdentifiers,
         ?RoutineMemo $routineMemo,

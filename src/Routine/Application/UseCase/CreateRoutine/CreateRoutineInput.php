@@ -9,14 +9,14 @@ use Src\Routine\Domain\ValueObject\RoutineMemo;
 use Src\Routine\Domain\ValueObject\RoutineName;
 use Src\Routine\Domain\ValueObject\RoutineTagIdentifiers;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
+use Src\Shared\Domain\ValueObject\Identifier\RoutineIdentifier;
 
 final readonly class CreateRoutineInput implements CreateRoutineInputPort
 {
-    /**
-     * @param  list<CreateRoutineActionInput>  $routineActions
-     */
+    /** @param list<CreateRoutineActionInput> $routineActions */
     public function __construct(
         private AccountIdentifier $accountIdentifier,
+        private ?RoutineIdentifier $parentRoutineIdentifier,
         private RoutineName $routineName,
         private array $routineActions,
         private ?RoutineMemo $routineMemo,
@@ -27,6 +27,11 @@ final readonly class CreateRoutineInput implements CreateRoutineInputPort
     public function accountIdentifier(): AccountIdentifier
     {
         return $this->accountIdentifier;
+    }
+
+    public function parentRoutineIdentifier(): ?RoutineIdentifier
+    {
+        return $this->parentRoutineIdentifier;
     }
 
     public function routineName(): RoutineName

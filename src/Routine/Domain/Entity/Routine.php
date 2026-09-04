@@ -16,6 +16,7 @@ final class Routine
 {
     private function __construct(
         private readonly RoutineIdentifier $routineIdentifier,
+        private readonly ?RoutineIdentifier $parentRoutineIdentifier,
         private readonly RoutineName $routineName,
         private readonly RoutineActionIdentifiers $routineActionIdentifiers,
         private readonly ?RoutineMemo $routineMemo,
@@ -26,6 +27,7 @@ final class Routine
 
     public static function create(
         RoutineIdentifier $routineIdentifier,
+        ?RoutineIdentifier $parentRoutineIdentifier,
         RoutineName $routineName,
         RoutineActionIdentifiers $routineActionIdentifiers,
         ?RoutineMemo $routineMemo,
@@ -35,6 +37,7 @@ final class Routine
     ): self {
         return new self(
             routineIdentifier: $routineIdentifier,
+            parentRoutineIdentifier: $parentRoutineIdentifier,
             routineName: $routineName,
             routineActionIdentifiers: $routineActionIdentifiers,
             routineMemo: $routineMemo,
@@ -47,6 +50,11 @@ final class Routine
     public function routineIdentifier(): RoutineIdentifier
     {
         return $this->routineIdentifier;
+    }
+
+    public function parentRoutineIdentifier(): ?RoutineIdentifier
+    {
+        return $this->parentRoutineIdentifier;
     }
 
     public function routineName(): RoutineName

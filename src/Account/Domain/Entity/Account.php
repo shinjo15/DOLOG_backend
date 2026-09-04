@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Src\Account\Domain\Entity;
 
 use DateTimeImmutable;
-use Src\Account\Domain\Exception\InvalidAccountStatusException;
+
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\AccountStatus;
@@ -21,40 +21,114 @@ final class Account
         private readonly AccountName $accountName,
         private readonly ?AccountBio $accountBio,
         private readonly EmailAddress $emailAddress,
-        /** @var list<SocialLink> */ private readonly array $socialLinks,
+        /** @var list<SocialLink> */
+        private readonly array $socialLinks,
         private readonly FavoriteTagIdentifiers $favoriteTagIdentifiers,
         private AccountStatus $status,
         private ?DateTimeImmutable $banUntil,
     ) {}
 
     /** @param list<SocialLink> $socialLinks */
-    public static function create(AccountIdentifier $accountIdentifier, AccountName $accountName, ?AccountBio $accountBio, EmailAddress $emailAddress, array $socialLinks, FavoriteTagIdentifiers $favoriteTagIdentifiers, AccountStatus $status = AccountStatus::ACTIVE, ?DateTimeImmutable $banUntil = null): self
-    {
-        if (! array_is_list($socialLinks)) throw new \InvalidArgumentException('SNSリンクは一覧で指定する必要があります。');
-        foreach ($socialLinks as $socialLink) if (! $socialLink instanceof SocialLink) throw new \InvalidArgumentException('SNSリンクにはSocialLinkのみ指定できます。');
-        self::validateStatus($status, $banUntil);
+    public static function create(
+        AccountIdentifier $accountIdentifier,
+        AccountName $accountName,
+        ?AccountBio $accountBio,
+        EmailAddress $emailAddress,
+        array $socialLinks,
+        FavoriteTagIdentifiers $favoriteTagIdentifiers,
+    ): self {
+        if (! array_is_list($socialLinks)) {
+            throw new \InvalidArgumentException('SNSリンクは一覧で指定する必要があります。');
+        }
+
+        foreach ($socialLinks as $socialLink) {
+            if (! $socialLink instanceof SocialLink) {
+                throw new \InvalidArgumentException('SNSリンクにはSocialLinkのみ指定できます。');
+            }
+        }
+
+        return new self(
+            $accountIdentifier,
+            $accountName,
+            $accountBio,
+            $emailAddress,
+            $socialLinks,
+            $favoriteTagIdentifiers,
+            AccountStatus::ACTIVE,
+            null,
+        );
+    }
+
+    /** @param list<SocialLink> $socialLinks */
+    public static function restore(
+        AccountIdentifier $accountIdentifier,
+        AccountName $accountName,
+        ?AccountBio $accountBio,
+        EmailAddress $emailAddress,
+        array $socialLinks,
+        FavoriteTagIdentifiers $favoriteTagIdentifiers,
+        AccountStatus $status,
+        ?DateTimeImmutable $banUntil,
+    ): self {
         return new self($accountIdentifier, $accountName, $accountBio, $emailAddress, $socialLinks, $favoriteTagIdentifiers, $status, $banUntil);
     }
 
-    public function changeStatus(AccountStatus $status, ?DateTimeImmutable $banUntil): void
+    public function active(): void
     {
-        self::validateStatus($status, $banUntil);
-        $this->status = $status;
-        $this->banUntil = $banUntil;
+        $this->status = AccountStatus::ACTIVE;
+        $this->banUntil = null;
     }
 
-    private static function validateStatus(AccountStatus $status, ?DateTimeImmutable $banUntil): void
+    public function temporarilyBan(): void
     {
-        if ($status === AccountStatus::TEMPORARILY_BANNED && ($banUntil === null || $banUntil <= new DateTimeImmutable)) throw new InvalidAccountStatusException;
-        if ($status !== AccountStatus::TEMPORARILY_BANNED && $banUntil !== null) throw new InvalidAccountStatusException;
+        $this->status = AccountStatus::TEMPORARILY_BANNED;
+        $this->banUntil = new DateTimeImmutable('+2 weeks');
     }
 
-    public function accountIdentifier(): AccountIdentifier { return $this->accountIdentifier; }
-    public function accountName(): AccountName { return $this->accountName; }
-    public function accountBio(): ?AccountBio { return $this->accountBio; }
-    public function emailAddress(): EmailAddress { return $this->emailAddress; }
-    /** @return list<SocialLink> */ public function socialLinks(): array { return $this->socialLinks; }
-    public function favoriteTagIdentifiers(): FavoriteTagIdentifiers { return $this->favoriteTagIdentifiers; }
-    public function status(): AccountStatus { return $this->status; }
-    public function banUntil(): ?DateTimeImmutable { return $this->banUntil; }
+    public function permanentlyBan(): void
+    {
+        $this->status = AccountStatus::PERMANENTLY_BANNED;
+        $this->banUntil = null;
+    }
+
+
+    public function accountIdentifier(): AccountIdentifier
+    {
+        return $this->accountIdentifier;
+    }
+
+    public function accountName(): AccountName
+    {
+        return $this->accountName;
+    }
+
+    public function accountBio(): ?AccountBio
+    {
+        return $this->accountBio;
+    }
+
+    public function emailAddress(): EmailAddress
+    {
+        return $this->emailAddress;
+    }
+    /** @return list<SocialLink> */
+    public function socialLinks(): array
+    {
+        return $this->socialLinks;
+    }
+
+    public function favoriteTagIdentifiers(): FavoriteTagIdentifiers
+    {
+        return $this->favoriteTagIdentifiers;
+    }
+
+    public function status(): AccountStatus
+    {
+        return $this->status;
+    }
+
+    public function banUntil(): ?DateTimeImmutable
+    {
+        return $this->banUntil;
+    }
 }

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Src\Account\Application\UseCase\ChangeAccountStatus;
 
-use DateTimeImmutable;
 use Src\Account\Domain\ValueObject\AccountStatus;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
 
 interface ChangeAccountStatusInputPort
 {
     public function accountIdentifier(): AccountIdentifier;
+
     public function status(): AccountStatus;
-    public function banUntil(): ?DateTimeImmutable;
 }

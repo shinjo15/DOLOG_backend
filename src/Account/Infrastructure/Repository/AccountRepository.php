@@ -45,6 +45,6 @@ final class AccountRepository implements AccountRepositoryInterface
     private function restore(?AccountModel $model): ?Account
     {
         if ($model === null) return null;
-        return Account::create(new AccountIdentifier($model->account_identifier), new AccountName($model->account_name), $model->account_bio === null ? null : new AccountBio($model->account_bio), new EmailAddress($model->email_address), $model->socialLinks->map(static fn (AccountSocialLinkModel $link): SocialLink => new SocialLink(SocialType::from($link->type), new SocialUrl($link->url)))->all(), new FavoriteTagIdentifiers($model->favoriteTags->map(static fn (FavoriteTagModel $tag): TagIdentifier => new TagIdentifier($tag->tag_identifier))->all()), AccountStatus::from($model->status), $model->ban_until);
+        return Account::restore(new AccountIdentifier($model->account_identifier), new AccountName($model->account_name), $model->account_bio === null ? null : new AccountBio($model->account_bio), new EmailAddress($model->email_address), $model->socialLinks->map(static fn (AccountSocialLinkModel $link): SocialLink => new SocialLink(SocialType::from($link->type), new SocialUrl($link->url)))->all(), new FavoriteTagIdentifiers($model->favoriteTags->map(static fn (FavoriteTagModel $tag): TagIdentifier => new TagIdentifier($tag->tag_identifier))->all()), AccountStatus::from($model->status), $model->ban_until);
     }
 }

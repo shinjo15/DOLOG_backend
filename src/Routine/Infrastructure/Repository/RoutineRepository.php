@@ -15,6 +15,7 @@ final class RoutineRepository implements RoutineRepositoryInterface
     {
         $routineModel = RoutineModel::query()->create([
             'routine_identifier' => $routine->routineIdentifier()->value(),
+            'parent_routine_identifier' => $routine->parentRoutineIdentifier()?->value(),
             'routine_name' => $routine->routineName()->value(),
             'routine_memo' => $routine->routineMemo()?->value(),
             'account_identifier' => $routine->accountIdentifier()->value(),

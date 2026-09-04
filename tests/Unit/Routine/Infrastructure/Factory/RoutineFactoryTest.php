@@ -18,6 +18,7 @@ final class RoutineFactoryTest extends TestCase
     {
         $routine = (new RoutineFactory)->create(
             new RoutineIdentifier('34b8d590-07cb-49ca-bfd9-cb9f40e26bd3'),
+            null,
             new RoutineName('朝の集中ルーティン'),
             new RoutineActionIdentifiers([
                 new RoutineActionIdentifier('f6ca9f4c-169b-4b2d-a717-4a4f40d1490f'),

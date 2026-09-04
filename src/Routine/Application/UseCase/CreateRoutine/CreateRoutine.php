@@ -36,6 +36,7 @@ final readonly class CreateRoutine implements CreateRoutineInterface
         $routineActions = $this->createRoutineActions($input, $routineIdentifier);
         $routine = $this->routineFactory->create(
             $routineIdentifier,
+            $input->parentRoutineIdentifier(),
             $input->routineName(),
             new RoutineActionIdentifiers(array_map(
                 static fn (RoutineAction $routineAction): RoutineActionIdentifier => $routineAction->routineActionIdentifier(),

@@ -48,6 +48,7 @@ final class CreateRoutinePersistenceTest extends TestCase
 
         $this->app->make(CreateRoutineInterface::class)->execute(new CreateRoutineInput(
             accountIdentifier: new AccountIdentifier('3b5581e9-16df-4879-b7d2-5d88dca6ab87'),
+            parentRoutineIdentifier: null,
             routineName: new RoutineName('朝の集中ルーティン'),
             routineActions: [
                 new CreateRoutineActionInput(

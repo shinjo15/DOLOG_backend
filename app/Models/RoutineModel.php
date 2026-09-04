@@ -19,6 +19,7 @@ final class RoutineModel extends Model
 
     protected $fillable = [
         'routine_identifier',
+        'parent_routine_identifier',
         'routine_name',
         'routine_memo',
         'account_identifier',

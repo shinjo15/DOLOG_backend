@@ -9,16 +9,17 @@ use Src\Routine\Domain\ValueObject\RoutineMemo;
 use Src\Routine\Domain\ValueObject\RoutineName;
 use Src\Routine\Domain\ValueObject\RoutineTagIdentifiers;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
+use Src\Shared\Domain\ValueObject\Identifier\RoutineIdentifier;
 
 interface CreateRoutineInputPort
 {
     public function accountIdentifier(): AccountIdentifier;
 
+    public function parentRoutineIdentifier(): ?RoutineIdentifier;
+
     public function routineName(): RoutineName;
 
-    /**
-     * @return list<CreateRoutineActionInput>
-     */
+    /** @return list<CreateRoutineActionInput> */
     public function routineActions(): array;
 
     public function routineMemo(): ?RoutineMemo;

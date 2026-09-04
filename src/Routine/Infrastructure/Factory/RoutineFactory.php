@@ -18,6 +18,7 @@ final class RoutineFactory implements RoutineFactoryInterface
 {
     public function create(
         RoutineIdentifier $routineIdentifier,
+        ?RoutineIdentifier $parentRoutineIdentifier,
         RoutineName $routineName,
         RoutineActionIdentifiers $routineActionIdentifiers,
         ?RoutineMemo $routineMemo,
@@ -27,6 +28,7 @@ final class RoutineFactory implements RoutineFactoryInterface
     ): Routine {
         return Routine::create(
             $routineIdentifier,
+            $parentRoutineIdentifier,
             $routineName,
             $routineActionIdentifiers,
             $routineMemo,

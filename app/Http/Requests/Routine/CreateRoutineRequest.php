@@ -15,6 +15,7 @@ use Src\Routine\Domain\ValueObject\RoutineMemo;
 use Src\Routine\Domain\ValueObject\RoutineName;
 use Src\Routine\Domain\ValueObject\RoutineTagIdentifiers;
 use Src\Shared\Domain\ValueObject\Identifier\AccountIdentifier;
+use Src\Shared\Domain\ValueObject\Identifier\RoutineIdentifier;
 use Src\Shared\Domain\ValueObject\Identifier\TagIdentifier;
 
 final class CreateRoutineRequest extends FormRequest
@@ -29,6 +30,7 @@ final class CreateRoutineRequest extends FormRequest
     {
         return [
             'routine_name' => ['required', 'string', 'not_regex:/^\s*$/', 'max:50'],
+            'parent_routine_identifier' => ['nullable', 'uuid'],
             'routine_memo' => ['nullable', 'string', 'not_regex:/^\s*$/', 'max:300'],
             'routine_execution_minutes' => ['nullable', 'integer', 'min:1'],
             'tag_identifiers' => ['sometimes', 'array'],
@@ -46,6 +48,7 @@ final class CreateRoutineRequest extends FormRequest
         /**
          * @var array{
          *     routine_name: string,
+         *     parent_routine_identifier?: string|null,
          *     routine_memo?: string|null,
          *     routine_execution_minutes?: int,
          *     tag_identifiers?: list<string>,
@@ -61,6 +64,9 @@ final class CreateRoutineRequest extends FormRequest
 
         return new CreateRoutineInput(
             accountIdentifier: new AccountIdentifier($accountIdentifier),
+            parentRoutineIdentifier: isset($validated['parent_routine_identifier'])
+                ? new RoutineIdentifier($validated['parent_routine_identifier'])
+                : null,
             routineName: new RoutineName($validated['routine_name']),
             routineActions: array_map(
                 static fn (array $routineAction): CreateRoutineActionInput => new CreateRoutineActionInput(

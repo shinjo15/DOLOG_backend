@@ -6,6 +6,7 @@ namespace Tests\Feature\Routine\Presentation;
 
 use App\Models\TagModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 final class CreateRoutineActionTest extends TestCase
@@ -62,5 +63,32 @@ final class CreateRoutineActionTest extends TestCase
                 ],
             ],
         ])->assertUnauthorized();
+    }
+
+    public function test_creates_a_routine_that_references_the_specified_parent_routine(): void
+    {
+        DB::table('routines')->insert([
+            'routine_identifier' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            'account_identifier' => '3b5581e9-16df-4879-b7d2-5d88dca6ab87',
+            'routine_name' => '元ルーティン',
+            'available' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->withSession([
+            'account_identifier' => '3b5581e9-16df-4879-b7d2-5d88dca6ab87',
+        ])->postJson('/api/routines', [
+            'parent_routine_identifier' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            'routine_name' => 'カスタマイズ版',
+            'routine_actions' => [[
+                'routine_action_name' => '水を飲む',
+            ]],
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('routines', [
+            'parent_routine_identifier' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            'routine_name' => 'カスタマイズ版',
+        ]);
     }
 }

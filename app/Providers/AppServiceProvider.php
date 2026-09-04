@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Support\LaravelUuidServices;
 use Illuminate\Support\ServiceProvider;
 use Src\Account\Application\Service\AccountRegistrationMailServiceInterface;
+use Src\Account\Application\UseCase\ChangeAccountStatus\ChangeAccountStatus;
+use Src\Account\Application\UseCase\ChangeAccountStatus\ChangeAccountStatusInterface;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccount;
 use Src\Account\Application\UseCase\CreateAccount\CreateAccountInterface;
 use Src\Account\Domain\Factory\AccountFactoryInterface;
@@ -99,6 +101,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AccountRepositoryInterface::class, AccountRepository::class);
         $this->app->bind(AccountRegistrationMailServiceInterface::class, LaravelAccountRegistrationMailService::class);
         $this->app->bind(CreateAccountInterface::class, CreateAccount::class);
+        $this->app->bind(ChangeAccountStatusInterface::class, ChangeAccountStatus::class);
         $this->app->bind(TagFactoryInterface::class, TagFactory::class);
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
         $this->app->bind(CreateTagInterface::class, CreateTag::class);

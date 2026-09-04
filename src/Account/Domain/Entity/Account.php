@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Src\Account\Domain\Entity;
 
+use DateTimeImmutable;
+
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
+use Src\Account\Domain\ValueObject\AccountStatus;
 use Src\Account\Domain\ValueObject\EmailAddress;
 use Src\Account\Domain\ValueObject\FavoriteTagIdentifiers;
 use Src\Account\Domain\ValueObject\SocialLink;
@@ -21,8 +24,11 @@ final class Account
         /** @var list<SocialLink> */
         private readonly array $socialLinks,
         private readonly FavoriteTagIdentifiers $favoriteTagIdentifiers,
+        private AccountStatus $status,
+        private ?DateTimeImmutable $banUntil,
     ) {}
 
+    /** @param list<SocialLink> $socialLinks */
     public static function create(
         AccountIdentifier $accountIdentifier,
         AccountName $accountName,
@@ -42,14 +48,49 @@ final class Account
         }
 
         return new self(
-            accountIdentifier: $accountIdentifier,
-            accountName: $accountName,
-            accountBio: $accountBio,
-            emailAddress: $emailAddress,
-            socialLinks: $socialLinks,
-            favoriteTagIdentifiers: $favoriteTagIdentifiers,
+            $accountIdentifier,
+            $accountName,
+            $accountBio,
+            $emailAddress,
+            $socialLinks,
+            $favoriteTagIdentifiers,
+            AccountStatus::ACTIVE,
+            null,
         );
     }
+
+    /** @param list<SocialLink> $socialLinks */
+    public static function restore(
+        AccountIdentifier $accountIdentifier,
+        AccountName $accountName,
+        ?AccountBio $accountBio,
+        EmailAddress $emailAddress,
+        array $socialLinks,
+        FavoriteTagIdentifiers $favoriteTagIdentifiers,
+        AccountStatus $status,
+        ?DateTimeImmutable $banUntil,
+    ): self {
+        return new self($accountIdentifier, $accountName, $accountBio, $emailAddress, $socialLinks, $favoriteTagIdentifiers, $status, $banUntil);
+    }
+
+    public function active(): void
+    {
+        $this->status = AccountStatus::ACTIVE;
+        $this->banUntil = null;
+    }
+
+    public function temporarilyBan(): void
+    {
+        $this->status = AccountStatus::TEMPORARILY_BANNED;
+        $this->banUntil = new DateTimeImmutable('+2 weeks');
+    }
+
+    public function permanentlyBan(): void
+    {
+        $this->status = AccountStatus::PERMANENTLY_BANNED;
+        $this->banUntil = null;
+    }
+
 
     public function accountIdentifier(): AccountIdentifier
     {
@@ -70,10 +111,7 @@ final class Account
     {
         return $this->emailAddress;
     }
-
-    /**
-     * @return list<SocialLink>
-     */
+    /** @return list<SocialLink> */
     public function socialLinks(): array
     {
         return $this->socialLinks;
@@ -82,5 +120,15 @@ final class Account
     public function favoriteTagIdentifiers(): FavoriteTagIdentifiers
     {
         return $this->favoriteTagIdentifiers;
+    }
+
+    public function status(): AccountStatus
+    {
+        return $this->status;
+    }
+
+    public function banUntil(): ?DateTimeImmutable
+    {
+        return $this->banUntil;
     }
 }

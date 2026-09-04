@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Account\Application\UseCase\CreateAccount;
 
-use Src\Account\Application\Service\AccountImage;
 use Src\Account\Domain\ValueObject\AccountBio;
 use Src\Account\Domain\ValueObject\AccountName;
 use Src\Account\Domain\ValueObject\EmailAddress;
@@ -24,7 +23,7 @@ interface CreateAccountInputPort
 
     public function favoriteTagIdentifiers(): FavoriteTagIdentifiers;
 
-    public function iconImage(): ?AccountImage;
+    public function iconImage(): ?AccountImageFile;
 
-    public function headerImage(): ?AccountImage;
+    public function headerImage(): ?AccountImageFile;
 }
